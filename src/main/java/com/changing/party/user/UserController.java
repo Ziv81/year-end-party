@@ -35,9 +35,7 @@ public class UserController {
         return ResponseModel.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(LeaderBoard.builder()
-                        .result(userService.getUserByPointSortDesc(1, 10))
-                        .build())
+                .data(userService.getUserLeaderBoard(10))
                 .build();
     }
 }
