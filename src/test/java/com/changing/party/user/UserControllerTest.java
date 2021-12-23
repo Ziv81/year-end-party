@@ -42,7 +42,7 @@ class UserControllerTest {
     }
 
     private static User defaultUser = User.builder()
-            .userId(10L)
+            .userId(10)
             .userName("Ziv")
             .title("技術處 四組")
             .userPoint(100)
@@ -51,25 +51,19 @@ class UserControllerTest {
 
     private static List<User> defaultUserList = Arrays.asList(
             User.builder()
-                    .userId(10L)
-                    .userName("Ziv")
-                    .title("技術處 四組")
-                    .userPoint(100)
-                    .userRank(50)
+                    .userName("Jessica")
+                    .userPoint(300)
+                    .userRank(10)
                     .build(),
             User.builder()
-                    .userId(20L)
                     .userName("Doreen")
-                    .title("專案處 專案管理師")
                     .userPoint(200)
                     .userRank(30)
                     .build(),
             User.builder()
-                    .userId(30L)
-                    .userName("Jessica")
-                    .title("業務處 業務")
-                    .userPoint(300)
-                    .userRank(10)
+                    .userName("Ziv")
+                    .userPoint(100)
+                    .userRank(50)
                     .build()
     );
 
@@ -86,7 +80,7 @@ class UserControllerTest {
         this.mockMvc.perform(get("/api/user/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isOk(),
-                        content().json("{\"errorCode\":0,\"errorMessage\":\"Success\",\"data\":{\"title\":\"技術處 四組\",\"userName\":\"Ziv\",\"userId\":10,\"userPoint\":100,\"userRank\":50}}"));
+                        content().json("{\"errorCode\":0,\"errorMessage\":\"Success\",\"data\":{\"title\":\"技術處 四組\",\"userName\":\"Ziv\",\"userId\":10,\"userPoint\":100,\"userRank\":50}}", true));
     }
 
     /**
@@ -116,7 +110,7 @@ class UserControllerTest {
         this.mockMvc.perform(get("/api/user/leaderBoard"))
                 .andExpectAll(
                         status().isOk(),
-                        content().json("{\"errorCode\":0,\"errorMessage\":\"Success\",\"data\":{\"result\":[{\"userRank\":10,\"userName\":\"Jessica\",\"userPoint\":300},{\"userRank\":30,\"userName\":\"Doreen\",\"userPoint\":200},{\"userRank\":50,\"userName\":\"Ziv\",\"userPoint\":100}]}}")
+                        content().json("{\"errorCode\":0,\"errorMessage\":\"Success\",\"data\":{\"result\":[{\"userRank\":10,\"userName\":\"Jessica\",\"userPoint\":300},{\"userRank\":30,\"userName\":\"Doreen\",\"userPoint\":200},{\"userRank\":50,\"userName\":\"Ziv\",\"userPoint\":100}]}}", true)
                 );
     }
 }

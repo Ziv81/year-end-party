@@ -1,15 +1,17 @@
 package com.changing.party.binary.model;
 
 import com.changing.party.binary.BinaryService;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BinaryQuestion {
-    int questionId;
-    int score;
-    int choose;
+    Integer questionId;
+    Integer score;
+    Integer choose;
 
     public static BinaryQuestion getBinaryQuestion(BinaryQuestionModel binaryQuestionModel) {
         if (BinaryService.binaryStatus.equals(BinaryService.AnswerStatus.OPEN)) {

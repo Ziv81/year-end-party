@@ -17,6 +17,8 @@ public class UserLeaderBoard {
         List<User> userModels = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
             int userRank = i + 1;
+
+            //若目前積分與前一位相同，並列排名
             if (!userModels.isEmpty() &&
                     userModels.get(userModels.size() - 1).getUserPoint() == userList.get(i).getUserPoint()) {
                 userRank = userModels.get(userModels.size() - 1).getUserRank();
