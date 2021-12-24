@@ -1,6 +1,7 @@
 package com.changing.party.user;
 
 import com.changing.party.exception.UserIdNotFoundException;
+import com.changing.party.user.model.OnlyIdNameAndPointModel;
 import com.changing.party.user.model.User;
 import com.changing.party.user.model.UserModel;
 import com.changing.party.user.model.UserPointModel;
@@ -39,7 +40,7 @@ class UserServiceTest {
     }
 
     public static UserModel defaultUserModel = UserModel.builder()
-            .userId(10L)
+            .userId(10)
             .password("123456789")
             .chineseName("王大明")
             .englishName("Ziv")
@@ -82,27 +83,27 @@ class UserServiceTest {
     void should_return_leader_board_list_when_get_user_list_sort_by_point() {
         List<UserPointModel> userModels = Arrays.asList(
                 UserPointModel.builder()
-                        .userId(10L)
+                        .userId(10)
                         .englishName("First")
                         .userPoint(500)
                         .build(),
                 UserPointModel.builder()
-                        .userId(20L)
+                        .userId(20)
                         .englishName("Second")
                         .userPoint(400)
                         .build(),
                 UserPointModel.builder()
-                        .userId(30L)
+                        .userId(30)
                         .englishName("Third")
                         .userPoint(300)
                         .build(),
                 UserPointModel.builder()
-                        .userId(40L)
+                        .userId(40)
                         .englishName("Fourth")
                         .userPoint(200)
                         .build(),
                 UserPointModel.builder()
-                        .userId(50L)
+                        .userId(50)
                         .englishName("Fifth")
                         .userPoint(100)
                         .build()
@@ -129,27 +130,27 @@ class UserServiceTest {
     void should_return_same_point_user_until_total_three_user_when_two_user_same_point() {
         List<UserPointModel> userModels = Arrays.asList(
                 UserPointModel.builder()
-                        .userId(10L)
+                        .userId(10)
                         .englishName("First")
                         .userPoint(500)
                         .build(),
                 UserPointModel.builder()
-                        .userId(20L)
+                        .userId(20)
                         .englishName("Second")
                         .userPoint(400)
                         .build(),
                 UserPointModel.builder()
-                        .userId(30L)
+                        .userId(30)
                         .englishName("Third")
                         .userPoint(400)
                         .build(),
                 UserPointModel.builder()
-                        .userId(40L)
+                        .userId(40)
                         .englishName("Fourth")
                         .userPoint(200)
                         .build(),
                 UserPointModel.builder()
-                        .userId(50L)
+                        .userId(50)
                         .englishName("Fifth")
                         .userPoint(100)
                         .build()
@@ -179,27 +180,27 @@ class UserServiceTest {
     void should_return_same_point_user_even_total_three_user_when_three_user_same_point() {
         List<UserPointModel> userModels = Arrays.asList(
                 UserPointModel.builder()
-                        .userId(10L)
+                        .userId(10)
                         .englishName("First")
                         .userPoint(500)
                         .build(),
                 UserPointModel.builder()
-                        .userId(20L)
+                        .userId(20)
                         .englishName("Second")
                         .userPoint(400)
                         .build(),
                 UserPointModel.builder()
-                        .userId(30L)
+                        .userId(30)
                         .englishName("Third")
                         .userPoint(300)
                         .build(),
                 UserPointModel.builder()
-                        .userId(40L)
+                        .userId(40)
                         .englishName("Fourth")
                         .userPoint(300)
                         .build(),
                 UserPointModel.builder()
-                        .userId(50L)
+                        .userId(50)
                         .englishName("Fifth")
                         .userPoint(100)
                         .build()

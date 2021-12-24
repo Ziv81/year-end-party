@@ -13,7 +13,7 @@ import java.util.List;
 public class UserLeaderBoard {
     List<User> result;
 
-    public static UserLeaderBoard getUserLeaderBoardModel(List<UserPointModel> userList, int size) {
+    public static UserLeaderBoard getUserLeaderBoardModel(List<OnlyIdNameAndPointModel> userList, int size) {
         List<User> userModels = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
             int userRank = i + 1;

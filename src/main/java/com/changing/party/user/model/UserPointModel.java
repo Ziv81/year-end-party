@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UserPointModel {
-    private Long userId;
-    private int userPoint;
-    private String englishName;
+    Integer userId;
+    Integer userPoint;
+    String englishName;
 }

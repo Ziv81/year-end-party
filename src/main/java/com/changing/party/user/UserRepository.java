@@ -1,5 +1,6 @@
 package com.changing.party.user;
 
+import com.changing.party.user.model.OnlyIdNameAndPointModel;
 import com.changing.party.user.model.UserModel;
 import com.changing.party.user.model.UserPointModel;
 import org.springframework.data.domain.Pageable;
@@ -10,5 +11,9 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserModel, Integer> {
-    List<UserPointModel> findAllByOrderByUserPoint(Pageable pageable);
+    List<OnlyIdNameAndPointModel> findAllByOrderByUserPoint(Pageable pageable);
+
+    UserModel findByEmail(String email);
+
+    UserModel findByUserId(int userId);
 }

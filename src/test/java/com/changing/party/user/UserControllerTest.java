@@ -1,7 +1,6 @@
 package com.changing.party.user;
 
 import com.changing.party.exception.UserIdNotFoundException;
-import com.changing.party.model.response.ResponseModel;
 import com.changing.party.user.model.User;
 import com.changing.party.user.model.UserLeaderBoard;
 import org.junit.jupiter.api.AfterEach;

@@ -2,7 +2,6 @@ package com.changing.party.binary;
 
 import com.changing.party.binary.model.BinaryQuestionList;
 import com.changing.party.binary.model.BinaryQuestionModel;
-import com.changing.party.model.response.ResponseModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
