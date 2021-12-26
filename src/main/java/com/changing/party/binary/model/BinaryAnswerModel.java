@@ -15,7 +15,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "BinaryAnswer")
+@Table(name = "BinaryAnswer", indexes = {
+        @Index(name = "idx_binary_answer_user", columnList = "answeredUserId")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "uc_binary_answer_user", columnNames = {"answeredUserId"})
+})
 public class BinaryAnswerModel {
 
     @Id

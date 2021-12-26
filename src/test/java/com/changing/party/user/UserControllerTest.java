@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -75,7 +76,7 @@ class UserControllerTest {
      */
     @Test
     void should_return_user_when_get_user_by_id() throws Exception {
-        when(userService.getUserById(anyLong())).thenReturn(defaultUser);
+        when(userService.getUserById(anyInt())).thenReturn(defaultUser);
         this.mockMvc.perform(get("/api/user/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isOk(),
@@ -90,7 +91,7 @@ class UserControllerTest {
      */
     @Test
     void should_return_http_404_when_user_not_found() throws Exception {
-        when(userService.getUserById(anyLong())).thenThrow(UserIdNotFoundException.class);
+        when(userService.getUserById(anyInt())).thenThrow(UserIdNotFoundException.class);
         this.mockMvc.perform(get("/api/user/999"))
                 .andExpect(status().isNotFound());
     }

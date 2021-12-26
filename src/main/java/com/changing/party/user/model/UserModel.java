@@ -48,6 +48,9 @@ public class UserModel {
     @Column(name = "userPoint", nullable = false)
     private int userPoint;
 
+    @Column(name = "isAdmin", nullable = false)
+    private int isAdmin;
+
     @OneToOne(mappedBy = "answeredUser")
     private BinaryAnswerModel answerList;
 }

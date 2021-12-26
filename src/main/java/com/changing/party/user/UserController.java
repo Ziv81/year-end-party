@@ -44,14 +44,16 @@ public class UserController {
 
     @PostMapping(value = "/uploadUsers",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseModel uploadUsers(@RequestBody UploadUsers uploadUsers) {
+    public ResponseModel uploadUsers(@RequestBody UploadUsers uploadUsers,
+                                     @RequestParam(name = "autoUpdate") boolean autoUpdate) {
         AtomicReference<Integer> createUser = new AtomicReference<>(0);
         AtomicReference<Integer> editUser = new AtomicReference<>(0);
         userService.createUsers(
                 Optional.ofNullable(uploadUsers.getUsers())
                         .orElseThrow(() -> new UploadUserIsEmptyException()),
                 createUser,
-                editUser);
+                editUser,
+                autoUpdate);
         return ResponseModel.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(String.format("Success import user %s, edit user %s.", createUser.get(), editUser.get()))

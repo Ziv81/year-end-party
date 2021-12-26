@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @NoArgsConstructor
 @Data
@@ -14,11 +15,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "BinaryAnswerDetail")
 public class BinaryAnswerDetailModel {
-
-    public enum ChooseType {
-        YES,
-        NO
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,7 +27,9 @@ public class BinaryAnswerDetailModel {
     @Column(name = "questionId")
     Integer questionId;
 
-    @Enumerated(EnumType.ORDINAL)
     @Column(name = "choose")
-    ChooseType choose;
+    Integer choose;
+
+    @Column(name = "score")
+    Integer score;
 }

@@ -1,10 +1,9 @@
 package com.changing.party.user;
 
 import com.changing.party.exception.UserIdNotFoundException;
-import com.changing.party.user.model.OnlyIdNameAndPointModel;
+import com.changing.party.user.model.OnlyNameAndPointModel;
 import com.changing.party.user.model.User;
 import com.changing.party.user.model.UserModel;
-import com.changing.party.user.model.UserPointModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserServiceTest {
 
     @Mock
@@ -32,7 +34,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, null);
     }
 
     @AfterEach
@@ -57,7 +59,7 @@ class UserServiceTest {
      */
     @Test
     void should_return_user_when_get_user_success() {
-        when(userRepository.getById(Mockito.anyInt())).thenReturn(defaultUserModel);
+        when(userRepository.findByUserId(Mockito.anyInt())).thenReturn(defaultUserModel);
         User user = userService.getUserById(200);
         Assertions.assertEquals(10, user.getUserId());
         Assertions.assertEquals("Ziv", user.getUserName());
@@ -70,7 +72,7 @@ class UserServiceTest {
      */
     @Test
     void should_throw_user_id_not_found_exception_when_get_user_fail() {
-        when(userRepository.getById(Mockito.anyInt())).thenReturn(null);
+        when(userRepository.findByUserId(Mockito.anyInt())).thenReturn(null);
         UserIdNotFoundException exception =
                 Assertions.assertThrows(UserIdNotFoundException.class, () -> userService.getUserById(-1));
         Assertions.assertEquals("User id -1 not found", exception.getMessage());
@@ -81,32 +83,14 @@ class UserServiceTest {
      */
     @Test
     void should_return_leader_board_list_when_get_user_list_sort_by_point() {
-        List<UserPointModel> userModels = Arrays.asList(
-                UserPointModel.builder()
-                        .userId(10)
-                        .englishName("First")
-                        .userPoint(500)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(20)
-                        .englishName("Second")
-                        .userPoint(400)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(30)
-                        .englishName("Third")
-                        .userPoint(300)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(40)
-                        .englishName("Fourth")
-                        .userPoint(200)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(50)
-                        .englishName("Fifth")
-                        .userPoint(100)
-                        .build()
+        OnlyNameAndPointModel firstUser = OnlyNameAndPointStub.builder().englishName("First").userPoint(500).build();
+        OnlyNameAndPointModel secondUser = OnlyNameAndPointStub.builder().englishName("Second").userPoint(400).build();
+        OnlyNameAndPointModel thirdUser = OnlyNameAndPointStub.builder().englishName("Third").userPoint(300).build();
+        OnlyNameAndPointModel forthUser = OnlyNameAndPointStub.builder().englishName("Fourth").userPoint(200).build();
+        OnlyNameAndPointModel fifthUser = OnlyNameAndPointStub.builder().englishName("Fifth").userPoint(100).build();
+
+        List<OnlyNameAndPointModel> userModels = Arrays.asList(
+                firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
@@ -128,32 +112,14 @@ class UserServiceTest {
      */
     @Test
     void should_return_same_point_user_until_total_three_user_when_two_user_same_point() {
-        List<UserPointModel> userModels = Arrays.asList(
-                UserPointModel.builder()
-                        .userId(10)
-                        .englishName("First")
-                        .userPoint(500)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(20)
-                        .englishName("Second")
-                        .userPoint(400)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(30)
-                        .englishName("Third")
-                        .userPoint(400)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(40)
-                        .englishName("Fourth")
-                        .userPoint(200)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(50)
-                        .englishName("Fifth")
-                        .userPoint(100)
-                        .build()
+        OnlyNameAndPointModel firstUser = OnlyNameAndPointStub.builder().englishName("First").userPoint(500).build();
+        OnlyNameAndPointModel secondUser = OnlyNameAndPointStub.builder().englishName("Second").userPoint(400).build();
+        OnlyNameAndPointModel thirdUser = OnlyNameAndPointStub.builder().englishName("Third").userPoint(400).build();
+        OnlyNameAndPointModel forthUser = OnlyNameAndPointStub.builder().englishName("Fourth").userPoint(200).build();
+        OnlyNameAndPointModel fifthUser = OnlyNameAndPointStub.builder().englishName("Fifth").userPoint(100).build();
+
+        List<OnlyNameAndPointModel> userModels = Arrays.asList(
+                firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
@@ -178,32 +144,14 @@ class UserServiceTest {
      */
     @Test
     void should_return_same_point_user_even_total_three_user_when_three_user_same_point() {
-        List<UserPointModel> userModels = Arrays.asList(
-                UserPointModel.builder()
-                        .userId(10)
-                        .englishName("First")
-                        .userPoint(500)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(20)
-                        .englishName("Second")
-                        .userPoint(400)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(30)
-                        .englishName("Third")
-                        .userPoint(300)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(40)
-                        .englishName("Fourth")
-                        .userPoint(300)
-                        .build(),
-                UserPointModel.builder()
-                        .userId(50)
-                        .englishName("Fifth")
-                        .userPoint(100)
-                        .build()
+        OnlyNameAndPointModel firstUser = OnlyNameAndPointStub.builder().englishName("First").userPoint(500).build();
+        OnlyNameAndPointModel secondUser = OnlyNameAndPointStub.builder().englishName("Second").userPoint(400).build();
+        OnlyNameAndPointModel thirdUser = OnlyNameAndPointStub.builder().englishName("Third").userPoint(300).build();
+        OnlyNameAndPointModel forthUser = OnlyNameAndPointStub.builder().englishName("Fourth").userPoint(300).build();
+        OnlyNameAndPointModel fifthUser = OnlyNameAndPointStub.builder().englishName("Fifth").userPoint(100).build();
+
+        List<OnlyNameAndPointModel> userModels = Arrays.asList(
+                firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
