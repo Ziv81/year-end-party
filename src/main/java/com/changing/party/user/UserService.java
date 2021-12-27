@@ -2,20 +2,23 @@ package com.changing.party.user;
 
 import com.changing.party.constant.GlobalVariable;
 import com.changing.party.exception.UserIdNotFoundException;
+import com.changing.party.user.model.LoginUser;
 import com.changing.party.user.model.UserLeaderBoard;
 import com.changing.party.user.model.UserModel;
 import com.changing.party.user.model.upload.UploadUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -73,8 +76,6 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel user = userRepository.findByEnglishNameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found in the database."));
-        Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("roleName"));
-        return new org.springframework.security.core.userdetails.User(user.getEnglishName(), user.getPassword(), authorities);
+        return LoginUser.getLoginUser(user);
     }
 }

@@ -1,12 +1,8 @@
 package com.changing.party.binary.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 
 @NoArgsConstructor
 @Data
@@ -14,13 +10,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 @AllArgsConstructor
 @Entity
 @Table(name = "BinaryAnswerDetail")
+@EqualsAndHashCode(exclude = {"binaryAnswerId"})
 public class BinaryAnswerDetailModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer binaryAnswerDetailId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "binaryAnswerId")
     BinaryAnswerModel binaryAnswerId;
 

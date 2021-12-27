@@ -1,10 +1,7 @@
 package com.changing.party.binary.model;
 
 import com.changing.party.user.model.UserModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,6 +17,7 @@ import java.util.Set;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uc_binary_answer_user", columnNames = {"answeredUserId"})
 })
+@EqualsAndHashCode(exclude = {"answeredUser", "binaryAnswerDetails"})
 public class BinaryAnswerModel {
 
     @Id
@@ -27,11 +25,11 @@ public class BinaryAnswerModel {
     @Column(name = "binaryAnswerId")
     Integer binaryAnswerId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "answeredUserId", referencedColumnName = "userId")
     UserModel answeredUser;
 
-    @OneToMany(mappedBy = "binaryAnswerId")
+    @OneToMany(mappedBy = "binaryAnswerId", fetch = FetchType.LAZY)
     private Set<BinaryAnswerDetailModel> binaryAnswerDetails;
 
     @Column(name = "answeredTime")

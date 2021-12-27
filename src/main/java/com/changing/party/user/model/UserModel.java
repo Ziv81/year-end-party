@@ -1,20 +1,18 @@
 package com.changing.party.user.model;
 
 import com.changing.party.binary.model.BinaryAnswerModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @NoArgsConstructor
-@Data
 @Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+@Data
+@EqualsAndHashCode(exclude = "answerList")
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

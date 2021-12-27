@@ -1,10 +1,9 @@
 package com.changing.party.binary;
 
-import com.changing.party.binary.model.BinaryAnswerDetailDTO;
-import com.changing.party.binary.model.BinaryAnswerDetailModel;
-import com.changing.party.binary.model.BinaryAnswerList;
-import com.changing.party.binary.model.BinaryAnswerModel;
+import com.changing.party.binary.model.*;
 import com.changing.party.constant.GlobalVariable;
+import com.changing.party.exception.AnswerBinaryNotOpenException;
+import com.changing.party.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,13 +22,23 @@ import static org.mockito.Mockito.when;
 class BinaryServiceTest {
     @Mock
     private BinaryAnswerRepository binaryAnswerRepository;
+    @Mock
+    private BinaryAnswerDetailRepository binaryAnswerDetailRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
 
     @InjectMocks
     private BinaryService binaryService;
 
     @BeforeEach
     void setUp() {
-        binaryService = new BinaryService(binaryAnswerRepository);
+        binaryService = new BinaryService(
+                binaryAnswerRepository,
+                binaryAnswerDetailRepository,
+                binaryAnswerStatisticsRepository,
+                userRepository);
         List<BinaryAnswerDetailDTO> binaryAnswerDTOList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             binaryAnswerDTOList.add(BinaryAnswerDetailDTO.builder()
@@ -116,6 +125,15 @@ class BinaryServiceTest {
         Assertions.assertEquals(8, binaryAnswerList.getResult().get(7).getQuestionId());
         Assertions.assertEquals(3, binaryAnswerList.getResult().get(7).getChoose());
         Assertions.assertEquals(0, binaryAnswerList.getResult().get(7).getScore());
+    }
+
+    /**
+     * 不允許作答二位元題目時，上傳二位元題目拋出錯誤。
+     */
+    @Test
+    void should_throw_answer_binary_not_open_exception_when_answer_binary_status_not_open() {
+        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
+        Assertions.assertThrows(AnswerBinaryNotOpenException.class, () -> binaryService.answerBinaryQuestion(new AnswerBinary()));
     }
 
     BinaryAnswerModel getDefaultBinaryAnswerModel() {
