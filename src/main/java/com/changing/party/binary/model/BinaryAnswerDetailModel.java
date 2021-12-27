@@ -9,8 +9,11 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "BinaryAnswerDetail")
+@Table(name = "BinaryAnswerDetail", indexes = {
+        @Index(name = "idx_binaryanswerdetailmodel", columnList = "questionId, choose")
+})
 @EqualsAndHashCode(exclude = {"binaryAnswerId"})
+
 public class BinaryAnswerDetailModel {
 
     @Id

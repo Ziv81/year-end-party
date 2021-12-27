@@ -10,7 +10,10 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "user", indexes = {
+        @Index(name = "idx_usermodel_englishname", columnList = "englishName"),
+        @Index(name = "idx_usermodel_userid", columnList = "userId")
+})
 @Data
 @EqualsAndHashCode(exclude = "answerList")
 public class UserModel {

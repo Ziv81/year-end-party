@@ -20,7 +20,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tmp = request.getServletPath();
-        if (request.getServletPath().equals("/api/user/login") || request.getServletPath().contains("h2-console")) {
+        if (request.getServletPath().equals("/api/user/login")
+                || request.getServletPath().contains("h2-console")
+                || request.getServletPath().contains("uploadUsers")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);

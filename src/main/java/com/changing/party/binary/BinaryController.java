@@ -31,19 +31,11 @@ public class BinaryController {
 
     @PostMapping
     public ResponseModel answeredBinary(@Valid @RequestBody AnswerBinary answerBinary) {
-        try {
-            binaryService.answerBinaryQuestion(answerBinary);
-            return ResponseModel.builder()
-                    .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
-                    .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                    .data("")
-                    .build();
-        } catch (Exception ex) {
-            log.error("answeredBinary occur exception", ex);
-            return ResponseModel.builder()
-                    .errorCode(ServerConstant.SERVER_FAIL_CODE)
-                    .errorMessage(ServerConstant.SERVER_FAIL_MESSAGE)
-                    .build();
-        }
+        binaryService.answerBinaryQuestion(answerBinary);
+        return ResponseModel.builder()
+                .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
+                .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
+                .data("")
+                .build();
     }
 }

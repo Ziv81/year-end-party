@@ -5,9 +5,12 @@ import com.changing.party.exception.UserIdNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.Optional;
 
 @ControllerAdvice
 public class ServerExceptionHandler {
@@ -23,17 +26,17 @@ public class ServerExceptionHandler {
     }
 
     @ExceptionHandler(AnswerBinaryNotOpenException.class)
-    public Object userIdNotFoundExceptionHandler(AnswerBinaryNotOpenException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST);
+    public Object answerBinaryNotOpenExceptionHandler(AnswerBinaryNotOpenException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object ConstraintViolationExceptionHandler(MethodArgumentNotValidException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getFieldError().getDefaultMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
-    public Object ConstraintViolationExceptionHandler(Exception exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST);
+    public Object constraintViolationExceptionHandler(MethodArgumentNotValidException exception) {
+        String exceptionMessage = "";
+        Optional<FieldError> fieldError = Optional.ofNullable(exception.getFieldError());
+        if (fieldError.isPresent()) {
+            exceptionMessage = fieldError.get().getDefaultMessage();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionMessage);
     }
 }

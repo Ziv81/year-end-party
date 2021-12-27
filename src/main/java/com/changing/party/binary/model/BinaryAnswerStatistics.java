@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "binary_answer_statistics")
+@Table(name = "binary_answer_statistics", indexes = {
+        @Index(name = "idx_binaryanswerstatistics", columnList = "questionId")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "uc_binaryanswerstatistics", columnNames = {"questionId"})
+})
 @Builder
 @Getter
 @NoArgsConstructor
