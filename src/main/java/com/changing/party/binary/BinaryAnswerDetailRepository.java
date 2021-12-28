@@ -1,13 +1,17 @@
 package com.changing.party.binary;
 
 import com.changing.party.binary.model.BinaryAnswerDetailModel;
+import com.changing.party.binary.model.BinaryAnswerModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 public interface BinaryAnswerDetailRepository extends JpaRepository<BinaryAnswerDetailModel, Integer> {
+    Set<BinaryAnswerDetailModel> findByBinaryAnswerId(BinaryAnswerModel binaryAnswerId);
     int countByQuestionIdAndChoose(Integer questionId, Integer choose);
 
     @Modifying

@@ -1,8 +1,12 @@
 package com.changing.party.binary.management;
 
 import com.changing.party.binary.BinaryService;
+import com.changing.party.binary.model.BinaryAnswerStatisticsResponse;
+import com.changing.party.constant.ServerConstant;
+import com.changing.party.model.response.ResponseModel;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +34,7 @@ public class ManagementBinaryController {
     public ResponseEntity binaryStop() {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
         binaryService.squareUpScore();
+        binaryService.updateUserScoreByBinarySquareUp();
         return ResponseEntity.ok().build();
     }
 
@@ -37,5 +42,14 @@ public class ManagementBinaryController {
     public ResponseEntity binaryClearAll() {
         binaryService.clearAllBinaryAnsweredData();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/binary")
+    public ResponseModel getBinaryStatistics() {
+        return ResponseModel.builder()
+                .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
+                .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
+                .data(new BinaryAnswerStatisticsResponse(binaryService.getBinaryAnswerStatisticsData()))
+                .build();
     }
 }

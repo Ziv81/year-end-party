@@ -14,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -115,6 +117,24 @@ public class BinaryService {
     }
 
     /**
+     * 根據結算完的結果，經使用者的分數進行更新
+     */
+    public void updateUserScoreByBinarySquareUp() {
+        binaryAnswerRepository.findAll().forEach(
+                binaryAnswerModel -> {
+                    UserModel user = binaryAnswerModel.getAnsweredUser();
+                    user.setUserPoint(user.getUserPoint()
+                            + binaryAnswerModel
+                            .getBinaryAnswerDetails()
+                            .stream()
+                            .mapToInt(BinaryAnswerDetailModel::getScore)
+                            .sum());
+                    userRepository.save(user);
+                }
+        );
+    }
+
+    /**
      * 結算各題目分數，並在最後統一將未選擇或各題屬於多數的回答分數設定為0
      */
     public void squareUpScore() {
@@ -154,13 +174,43 @@ public class BinaryService {
         }
     }
 
+    /**
+     * 儲存二位元統計結果，供後續管理網站使用。
+     *
+     * @param questionId
+     * @param chooseYes
+     * @param chooseNo
+     * @param chooseSkip
+     */
     private void updateBinaryAnswerStatistics(Integer questionId, int chooseYes, int chooseNo, int chooseSkip) {
-        binaryAnswerStatisticsRepository.save(BinaryAnswerStatistics.builder()
+        binaryAnswerStatisticsRepository.save(BinaryAnswerStatisticsModel.builder()
                 .questionId(questionId)
                 .chooseYes(chooseYes)
                 .chooseNo(chooseNo)
                 .chooseSkip(chooseSkip)
                 .build());
+    }
+
+    public List<BinaryAnswerStatisticsDto> getBinaryAnswerStatisticsData() {
+        List<BinaryAnswerStatisticsModel> binaryAnswerStatisticsModels = binaryAnswerStatisticsRepository.findAll();
+        List<BinaryAnswerStatisticsDto> binaryAnswerStatisticsDtos = new ArrayList<>();
+        if (!binaryAnswerStatisticsModels.isEmpty()) {
+            binaryAnswerStatisticsModels.forEach(
+                    x -> binaryAnswerStatisticsDtos.add(BinaryAnswerStatisticsDto.getBinaryAnswerStatisticsDto(x))
+            );
+        } else {
+            GlobalVariable.BINARY_QUESTION_LIST.forEach(
+                    x -> binaryAnswerStatisticsDtos.add(BinaryAnswerStatisticsDto
+                            .builder()
+                            .questionId(x.getQuestionId())
+                            .chooseYes(0)
+                            .chooseNo(0)
+                            .chooseSkip(0)
+                            .build())
+            );
+        }
+
+        return binaryAnswerStatisticsDtos;
     }
 
     /**

@@ -72,10 +72,19 @@ public class UserService implements UserDetailsService {
         });
     }
 
+    /**
+     * 僅可使用於系統登入
+     *
+     * @param username
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel user = userRepository.findByEnglishNameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found in the database."));
+        user.setLastLogin(new Date());
+        userRepository.save(user);
         return LoginUser.getLoginUser(user);
     }
 }
