@@ -2,9 +2,13 @@ package com.changing.party.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.changing.party.common.JWTUtil;
+import com.changing.party.common.ServerConstant;
+import com.changing.party.response.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +29,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 || request.getServletPath().contains("uploadUsers")) {
             filterChain.doFilter(request, response);
         } else {
+            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
@@ -36,9 +41,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception ex) {
                     log.error("Verify JWT token fail.", ex);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
+                    new ObjectMapper().writeValue(response.getOutputStream(),
+                            Response.builder()
+                                    .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                                    .errorMessage("JWT token verify fail.")
+                                    .build());
                 }
             } else {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
+                new ObjectMapper().writeValue(response.getOutputStream(),
+                        Response.builder()
+                                .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                                .errorMessage("No authorization.")
+                                .build());
             }
         }
     }

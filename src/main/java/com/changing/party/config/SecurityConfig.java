@@ -3,6 +3,7 @@ package com.changing.party.config;
 import com.changing.party.filter.CorsFilter;
 import com.changing.party.filter.CustomAuthenticationFilter;
 import com.changing.party.filter.CustomAuthorizationFilter;
+import com.changing.party.filter.LogRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new CorsFilter(), WebAsyncManagerIntegrationFilter.class);
+        http.addFilterBefore(new LogRequestFilter(), WebAsyncManagerIntegrationFilter.class);
     }
 
     @Bean

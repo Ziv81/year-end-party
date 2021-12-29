@@ -68,4 +68,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .build();
         new ObjectMapper().writeValue(response.getOutputStream(), responseModel);
     }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        Response responseModel = Response.builder()
+                .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                .errorMessage("Verify user fail")
+                .build();
+        new ObjectMapper().writeValue(response.getOutputStream(), responseModel);
+    }
 }

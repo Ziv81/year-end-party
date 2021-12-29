@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Response findUserById(@PathVariable int id) {
+    public Response findUserById(@PathVariable @Size(max = 200) int id) {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
