@@ -82,7 +82,7 @@ public class ServerExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Object methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException exception) {
         log.error("Method argument type mismatch exception", exception);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
                         .errorMessage("Input type error check input type.")
