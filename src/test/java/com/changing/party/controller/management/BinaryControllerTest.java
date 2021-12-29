@@ -1,4 +1,4 @@
-package com.changing.party.binary.management;
+package com.changing.party.controller.management;
 
 import com.changing.party.service.BinaryService;
 import com.changing.party.controller.management.ManagementBinaryController;

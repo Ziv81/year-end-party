@@ -1,4 +1,4 @@
-package com.changing.party.user;
+package com.changing.party.controller.api;
 
 import com.changing.party.common.JWTUtil;
 import com.changing.party.common.exception.UserIdNotFoundException;

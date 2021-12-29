@@ -1,4 +1,4 @@
-package com.changing.party.binary;
+package com.changing.party.service;
 
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.exception.AnswerBinaryNotOpenException;
@@ -12,8 +12,6 @@ import com.changing.party.repository.BinaryAnswerRepository;
 import com.changing.party.repository.BinaryAnswerStatisticsRepository;
 import com.changing.party.repository.UserRepository;
 import com.changing.party.request.AnswerBinaryRequest;
-import com.changing.party.service.BinaryService;
-import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +56,7 @@ class BinaryServiceTest {
             binaryAnswerDTOList.add(BinaryAnswerDetailDTO.builder()
                     .questionId(i + 1).build());
         }
-        GlobalVariable.BINARY_QUESTION_LIST = binaryAnswerDTOList;
+        GlobalVariable.getGlobalVariable().setBINARY_QUESTION_LIST(binaryAnswerDTOList);
     }
 
     @AfterEach

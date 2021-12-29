@@ -11,7 +11,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class ReadAdminUserRunner implements ApplicationRunner {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8));
             jsonNode.forEach(node -> adminsUserList.add(node.asText()));
-            GlobalVariable.ADMIN_USER_LIST = adminsUserList;
+            GlobalVariable.getGlobalVariable().setADMIN_USER_LIST(adminsUserList);
         } catch (Exception ex) {
             log.error("ReadAdminUserRunner occur ex", ex);
         }

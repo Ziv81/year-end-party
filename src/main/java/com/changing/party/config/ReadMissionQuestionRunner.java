@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Component
@@ -30,10 +31,21 @@ public class ReadMissionQuestionRunner implements ApplicationRunner {
             jsonNode.get("missions").forEach(question -> missionQuestionConfigDTOS.add(MissionQuestionConfigDTO.builder()
                     .missionId(question.get("missionId").asInt())
                     .missionType(question.get("missionType").asInt())
+                    .missionAnswer(getMissionAnswerList(question.get("missionAnswer")))
                     .build()));
-            GlobalVariable.MISSION_QUESTION_LIST = missionQuestionConfigDTOS;
+            GlobalVariable.getGlobalVariable().setMISSION_QUESTION_LIST(missionQuestionConfigDTOS);
         } catch (Exception ex) {
             log.error("ReadBinaryQuestionRunner occur ex", ex);
         }
+    }
+
+    private List<String> getMissionAnswerList(JsonNode jsonNode) {
+        List<String> results = new ArrayList<>();
+        Optional.ofNullable(jsonNode).ifPresent(
+                notNullJsonNode ->
+                        notNullJsonNode.forEach(
+                                x -> results.add(x.asText())
+                        ));
+        return results;
     }
 }

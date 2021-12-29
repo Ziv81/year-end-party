@@ -1,4 +1,4 @@
-package com.changing.party.user;
+package com.changing.party.service;
 
 import com.changing.party.model.OnlyNameAndPointModel;
 import lombok.Builder;

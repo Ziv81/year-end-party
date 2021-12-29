@@ -1,8 +1,7 @@
-package com.changing.party.binary;
+package com.changing.party.controller.api;
 
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.JWTUtil;
-import com.changing.party.controller.api.BinaryController;
 import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.changing.party.model.LoginUser;
 import com.changing.party.service.BinaryService;
@@ -84,7 +83,7 @@ class BinaryControllerTest {
                     .questionId(i + 1)
                     .build());
         }
-        GlobalVariable.BINARY_QUESTION_LIST = binaryAnswerDetailDTOList;
+        GlobalVariable.getGlobalVariable().setBINARY_QUESTION_LIST(binaryAnswerDetailDTOList);
         this.mockMvc.perform(post("/rest/api/binary")
                         .content("{\"choose\":[1,2,3,2,4,1,3,2,1,1]}")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.validation.constraints.NotBlank;
+
 @RestController
 @RequestMapping("/rest/api/mission")
 @EnableWebMvc
@@ -21,7 +23,8 @@ public class MissionController {
      * @return
      */
     @PostMapping(value = "/image/{missionId}")
-    Response answerMissionImage(@PathVariable(name = "missionId") int missionId) {
+    Response answerMissionImage(@PathVariable(name = "missionId")
+                                @NotBlank int missionId) {
         return null;
     }
 
@@ -32,7 +35,8 @@ public class MissionController {
      * @return
      */
     @PostMapping(value = "/answer/{missionId}")
-    Response answerMission(@PathVariable(name = "missionId") int missionId) {
+    Response answerMission(@PathVariable(name = "missionId")
+                           @NotBlank int missionId) {
         return null;
     }
 }

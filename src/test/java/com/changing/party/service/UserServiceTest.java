@@ -1,11 +1,10 @@
-package com.changing.party.user;
+package com.changing.party.service;
 
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.repository.UserRepository;
 import com.changing.party.model.OnlyNameAndPointModel;
 import com.changing.party.response.UserResponse;
 import com.changing.party.model.UserModel;
-import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
