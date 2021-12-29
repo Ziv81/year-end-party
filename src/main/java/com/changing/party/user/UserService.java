@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -41,14 +43,15 @@ public class UserService implements UserDetailsService {
     public void createUsers(List<UploadUser> users,
                             AtomicReference<Integer> createUser,
                             AtomicReference<Integer> editUser,
-                            boolean autoUpdate) {
+                            boolean autoUpdate)  {
+        String passwordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
         users.forEach(user -> {
             Optional<UserModel> existUserOptional = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
             List<String> tmp = GlobalVariable.ADMIN_USER_LIST;
             int isAdmin = GlobalVariable.ADMIN_USER_LIST.contains(user.getEmail().toLowerCase(Locale.ROOT)) ? 1 : 0;
             if (!existUserOptional.isPresent()) {
                 userRepository.save(UserModel.builder()
-                        .password(passwordEncoder.encode("password"))
+                        .password(passwordEncoder.encode(passwordHash))
                         .chineseName(user.getChineseName())
                         .englishName(user.getEnglishName())
                         .department(String.format("%s %s", user.getDepartment(), user.getGroup()))
@@ -65,6 +68,7 @@ public class UserService implements UserDetailsService {
                 existUser.setEnglishName(user.getEnglishName());
                 existUser.setDepartment(String.format("%s %s", user.getDepartment(), user.getGroup()));
                 existUser.setJobTitle(user.getJobTitle());
+                existUser.setPassword(passwordEncoder.encode(passwordHash));
                 existUser.setIsAdmin(isAdmin);
                 userRepository.save(existUser);
                 editUser.getAndSet(editUser.get() + 1);

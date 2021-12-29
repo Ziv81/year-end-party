@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RestController
-@RequestMapping("/management")
+@RequestMapping("/rest/management")
 @EnableWebMvc
 @Log4j2
 public class ManagementBinaryController {

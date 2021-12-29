@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/binary")
+@RequestMapping("/rest/api/binary")
 @EnableWebMvc
 @Log4j2
 public class BinaryController {

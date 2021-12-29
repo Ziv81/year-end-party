@@ -1,5 +1,6 @@
 package com.changing.party.config;
 
+import com.changing.party.filter.CorsFilter;
 import com.changing.party.filter.CustomAuthenticationFilter;
 import com.changing.party.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,17 +34,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/user/login");
+        customAuthenticationFilter.setFilterProcessesUrl("/rest/api/user/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
         http.headers().frameOptions().disable();
-        http.authorizeRequests().antMatchers("/api/user/login").permitAll();
-        http.authorizeRequests().antMatchers("/api/user/uploadUsers").permitAll();
-        http.authorizeRequests().antMatchers("/api");
+        http.authorizeRequests().antMatchers("/rest/api/user/login").permitAll();
+        http.authorizeRequests().antMatchers("/rest/api/user/uploadUsers").permitAll();
+        http.authorizeRequests().antMatchers("/rest/api");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CorsFilter(), WebAsyncManagerIntegrationFilter.class);
     }
 
     @Bean

@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("rest/api/user")
 @EnableWebMvc
 public class UserController {
 
