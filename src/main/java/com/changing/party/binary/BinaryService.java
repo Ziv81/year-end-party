@@ -65,7 +65,8 @@ public class BinaryService {
      * @return
      */
     public BinaryAnswerList getBinaryAnswerList() {
-        Optional<BinaryAnswerModel> binaryAnswerModelOptional = binaryAnswerRepository.findByAnsweredUser_UserId(10);
+        Optional<BinaryAnswerModel> binaryAnswerModelOptional =
+                binaryAnswerRepository.findByAnsweredUser_UserId(getUserModelFromSecurityContext().getUserId());
         //使用者已經填寫完成
         if (binaryAnswerModelOptional.isPresent()) {
             if (binaryAnswerStatus.equals(BinaryAnswerStatus.CLOSE)) {
@@ -98,12 +99,8 @@ public class BinaryService {
             throw new AnswerBinaryNotOpenException();
         }
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        UserModel user = userRepository.findByEnglishNameIgnoreCase(usernamePasswordAuthenticationToken.getName())
-                .orElseThrow(() -> new UsernameNotFoundException(usernamePasswordAuthenticationToken.getName()));
         BinaryAnswerModel binaryAnswerModel = binaryAnswerRepository.save(BinaryAnswerModel.builder()
-                .answeredUser(user)
+                .answeredUser(getUserModelFromSecurityContext())
                 .answeredTime(new Date())
                 .build());
         for (int i = 0; i < answerBinary.getChoose().size(); i++) {
@@ -114,6 +111,14 @@ public class BinaryService {
                             .binaryAnswerId(binaryAnswerModel)
                             .build());
         }
+    }
+
+    private UserModel getUserModelFromSecurityContext() {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserModel user = userRepository.findByEnglishNameIgnoreCase(usernamePasswordAuthenticationToken.getName())
+                .orElseThrow(() -> new UsernameNotFoundException(usernamePasswordAuthenticationToken.getName()));
+        return user;
     }
 
     /**
@@ -221,4 +226,5 @@ public class BinaryService {
         binaryAnswerRepository.deleteAll();
         binaryAnswerStatisticsRepository.deleteAll();
     }
+
 }

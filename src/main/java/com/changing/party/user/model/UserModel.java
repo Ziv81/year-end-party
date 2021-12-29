@@ -54,4 +54,10 @@ public class UserModel {
 
     @OneToOne(mappedBy = "answeredUser")
     private BinaryAnswerModel answerList;
+
+    @Column(name = "isCheckIn")
+    private Integer isCheckIn;
+
+    @Column(name = "isAgree")
+    private Integer isAgree;
 }

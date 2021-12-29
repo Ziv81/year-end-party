@@ -69,6 +69,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                 .userName(user.getUsername())
                                 .userId(user.getUserId())
                                 .userPoint(user.getUserPoint())
+                                .userRank(user.getUserRank())
                                 .build())
                         .build())
                 .build();

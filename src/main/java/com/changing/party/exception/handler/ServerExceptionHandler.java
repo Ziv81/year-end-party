@@ -1,6 +1,7 @@
 package com.changing.party.exception.handler;
 
 import com.changing.party.exception.AnswerBinaryNotOpenException;
+import com.changing.party.exception.GetUserRankException;
 import com.changing.party.exception.UserIdNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,10 @@ public class ServerExceptionHandler {
             exceptionMessage = fieldError.get().getDefaultMessage();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionMessage);
+    }
+
+    @ExceptionHandler(GetUserRankException.class)
+    public Object getUserRankExceptionHandler(GetUserRankException getUserRankException) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getUserRankException.getMessage());
     }
 }

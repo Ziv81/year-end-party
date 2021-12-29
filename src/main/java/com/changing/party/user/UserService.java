@@ -1,8 +1,10 @@
 package com.changing.party.user;
 
 import com.changing.party.constant.GlobalVariable;
+import com.changing.party.exception.GetUserRankException;
 import com.changing.party.exception.UserIdNotFoundException;
 import com.changing.party.user.model.LoginUser;
+import com.changing.party.user.model.OnlyPointModel;
 import com.changing.party.user.model.UserLeaderBoard;
 import com.changing.party.user.model.UserModel;
 import com.changing.party.user.model.upload.UploadUser;
@@ -15,8 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -32,8 +32,9 @@ public class UserService implements UserDetailsService {
 
 
     public com.changing.party.user.model.User getUserById(int id) {
-        return com.changing.party.user.model.User.getUserModel(Optional.ofNullable(userRepository.findByUserId(id))
-                .orElseThrow(() -> new UserIdNotFoundException(id)));
+        UserModel userModel = Optional.ofNullable(userRepository.findByUserId(id))
+                .orElseThrow(() -> new UserIdNotFoundException(id));
+        return com.changing.party.user.model.User.getUserModel(userModel, getUserRank(userModel.getUserPoint()));
     }
 
     public UserLeaderBoard getUserLeaderBoard(int size) {
@@ -43,7 +44,7 @@ public class UserService implements UserDetailsService {
     public void createUsers(List<UploadUser> users,
                             AtomicReference<Integer> createUser,
                             AtomicReference<Integer> editUser,
-                            boolean autoUpdate)  {
+                            boolean autoUpdate) {
         String passwordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
         users.forEach(user -> {
             Optional<UserModel> existUserOptional = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
@@ -89,6 +90,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found in the database."));
         user.setLastLogin(new Date());
         userRepository.save(user);
-        return LoginUser.getLoginUser(user);
+        return LoginUser.getLoginUser(user, getUserRank(user.getUserPoint()));
+    }
+
+    private int getUserRank(Integer userPoint) {
+        List<OnlyPointModel> userPointList = userRepository.findAllByOrderByUserPointDesc();
+        for (int i = 0; i < userPointList.size(); i++) {
+            if (userPointList.get(i).getUserPoint() == userPoint)
+                return i + 1;
+        }
+        throw new GetUserRankException(userPointList, userPoint);
     }
 }
