@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 @ControllerAdvice
@@ -54,14 +55,24 @@ public class ServerExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Object constraintViolationExceptionHandler(ConstraintViolationException exception) {
+        log.error("Constrain violation exception", exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage(exception.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object constraintViolationExceptionHandler(MethodArgumentNotValidException exception) {
+    public Object methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
         String exceptionMessage = "";
         Optional<FieldError> fieldError = Optional.ofNullable(exception.getFieldError());
         if (fieldError.isPresent()) {
             exceptionMessage = fieldError.get().getDefaultMessage();
         }
-        log.error("Constrain violation exception", exception);
+        log.error("Method argument not valid exception", exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)

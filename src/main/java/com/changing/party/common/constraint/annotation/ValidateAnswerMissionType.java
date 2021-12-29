@@ -7,11 +7,11 @@ import javax.validation.Payload;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Constraint(validatedBy = AnswerMissionTypeValidator.class)
-@Target({FIELD})
+@Target({PARAMETER})
 @Retention(RUNTIME)
 public @interface ValidateAnswerMissionType {
     String message() default "Answer content type not accept.";
@@ -20,5 +20,5 @@ public @interface ValidateAnswerMissionType {
 
     Class<? extends Payload>[] payload() default {};
 
-    MissionType missionType() default MissionType.NONE;
+    MissionType[] missionType() default {};
 }

@@ -14,7 +14,7 @@ public class GlobalVariable {
 
     private static GlobalVariable globalVariable = null;
 
-    public static GlobalVariable getGlobalVariable() {
+    public static GlobalVariable getGlobalVariableService() {
         if (globalVariable == null)
             globalVariable = new GlobalVariable();
         return globalVariable;

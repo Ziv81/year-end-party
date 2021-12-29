@@ -1,5 +1,6 @@
 package com.changing.party.common.constraint.validator;
 
+import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.constraint.annotation.ValidateAnswerMissionIdExist;
 
 import javax.validation.ConstraintValidator;
@@ -9,6 +10,6 @@ public class AnswerMissionIdExistValidator implements ConstraintValidator<Valida
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return false;
+        return value > 0 && value < GlobalVariable.getGlobalVariableService().getMISSION_QUESTION_LIST().size();
     }
 }

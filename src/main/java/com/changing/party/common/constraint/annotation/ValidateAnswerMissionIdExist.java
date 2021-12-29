@@ -7,11 +7,11 @@ import javax.validation.Payload;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Constraint(validatedBy = AnswerMissionIdExistValidator.class)
-@Target({FIELD})
+@Target({PARAMETER})
 @Retention(RUNTIME)
 public @interface ValidateAnswerMissionIdExist {
     String message() default "Mission id not mapping";

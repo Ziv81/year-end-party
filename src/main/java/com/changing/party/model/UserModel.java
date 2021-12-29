@@ -10,7 +10,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "user", indexes = {
+@Table(name = "year_end_party_user", indexes = {
         @Index(name = "idx_usermodel_englishname", columnList = "englishName"),
         @Index(name = "idx_usermodel_userid", columnList = "userId")
 })

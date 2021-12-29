@@ -1,7 +1,7 @@
 package com.changing.party.config;
 
-import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.changing.party.common.GlobalVariable;
+import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -28,7 +28,7 @@ public class ReadBinaryQuestionRunner implements ApplicationRunner {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8));
             jsonNode.get("questions").forEach(question -> questionList.add(BinaryAnswerDetailDTO.builder().questionId(question.get("questionId").asInt()).build()));
-            GlobalVariable.BINARY_QUESTION_LIST = questionList;
+            GlobalVariable.getGlobalVariableService().setBINARY_QUESTION_LIST(questionList);
         } catch (Exception ex) {
             log.error("ReadBinaryQuestionRunner occur ex", ex);
         }

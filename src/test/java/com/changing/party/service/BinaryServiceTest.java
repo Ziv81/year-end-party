@@ -56,7 +56,7 @@ class BinaryServiceTest {
             binaryAnswerDTOList.add(BinaryAnswerDetailDTO.builder()
                     .questionId(i + 1).build());
         }
-        GlobalVariable.getGlobalVariable().setBINARY_QUESTION_LIST(binaryAnswerDTOList);
+        GlobalVariable.getGlobalVariableService().setBINARY_QUESTION_LIST(binaryAnswerDTOList);
     }
 
     @AfterEach

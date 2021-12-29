@@ -83,7 +83,7 @@ class BinaryControllerTest {
                     .questionId(i + 1)
                     .build());
         }
-        GlobalVariable.getGlobalVariable().setBINARY_QUESTION_LIST(binaryAnswerDetailDTOList);
+        GlobalVariable.getGlobalVariableService().setBINARY_QUESTION_LIST(binaryAnswerDetailDTOList);
         this.mockMvc.perform(post("/rest/api/binary")
                         .content("{\"choose\":[1,2,3,2,4,1,3,2,1,1]}")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
         String passwordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
         users.forEach(user -> {
             Optional<UserModel> existUserOptional = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
-            int isAdmin = GlobalVariable.getGlobalVariable().getADMIN_USER_LIST().contains(user.getEmail().toLowerCase(Locale.ROOT)) ? 1 : 0;
+            int isAdmin = GlobalVariable.getGlobalVariableService().getADMIN_USER_LIST().contains(user.getEmail().toLowerCase(Locale.ROOT)) ? 1 : 0;
             if (!existUserOptional.isPresent()) {
                 userRepository.save(UserModel.builder()
                         .password(passwordEncoder.encode(passwordHash))

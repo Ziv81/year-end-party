@@ -21,6 +21,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.2'
 
+
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -29,7 +30,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor('org.projectlombok:lombok')
 
-    runtime 'com.h2database:h2'
+    runtime 'com.microsoft.sqlserver:mssql-jdbc'
 }
 
 

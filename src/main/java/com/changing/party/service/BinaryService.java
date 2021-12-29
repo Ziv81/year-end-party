@@ -142,7 +142,7 @@ public class BinaryService {
      * 結算各題目分數，並在最後統一將未選擇或各題屬於多數的回答分數設定為0
      */
     public void squareUpScore() {
-        GlobalVariable.BINARY_QUESTION_LIST.forEach(
+        GlobalVariable.getGlobalVariableService().getBINARY_QUESTION_LIST().forEach(
                 binaryQuestion -> {
                     int chooseYes = binaryAnswerDetailRepository.countByQuestionIdAndChoose(binaryQuestion.getQuestionId(), BinaryChooseOption.YES.getChoose());
                     int chooseNo = binaryAnswerDetailRepository.countByQuestionIdAndChoose(binaryQuestion.getQuestionId(), BinaryChooseOption.NO.getChoose());
@@ -203,7 +203,7 @@ public class BinaryService {
                     x -> binaryAnswerStatisticsDtos.add(BinaryAnswerStatisticsDTO.getBinaryAnswerStatisticsDto(x))
             );
         } else {
-            GlobalVariable.BINARY_QUESTION_LIST.forEach(
+            GlobalVariable.getGlobalVariableService().getBINARY_QUESTION_LIST().forEach(
                     x -> binaryAnswerStatisticsDtos.add(BinaryAnswerStatisticsDTO
                             .builder()
                             .questionId(x.getQuestionId())

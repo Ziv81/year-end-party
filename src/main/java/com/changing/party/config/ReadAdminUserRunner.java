@@ -27,7 +27,7 @@ public class ReadAdminUserRunner implements ApplicationRunner {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8));
             jsonNode.forEach(node -> adminsUserList.add(node.asText()));
-            GlobalVariable.getGlobalVariable().setADMIN_USER_LIST(adminsUserList);
+            GlobalVariable.getGlobalVariableService().setADMIN_USER_LIST(adminsUserList);
         } catch (Exception ex) {
             log.error("ReadAdminUserRunner occur ex", ex);
         }

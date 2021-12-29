@@ -33,7 +33,7 @@ public class ReadMissionQuestionRunner implements ApplicationRunner {
                     .missionType(question.get("missionType").asInt())
                     .missionAnswer(getMissionAnswerList(question.get("missionAnswer")))
                     .build()));
-            GlobalVariable.getGlobalVariable().setMISSION_QUESTION_LIST(missionQuestionConfigDTOS);
+            GlobalVariable.getGlobalVariableService().setMISSION_QUESTION_LIST(missionQuestionConfigDTOS);
         } catch (Exception ex) {
             log.error("ReadBinaryQuestionRunner occur ex", ex);
         }

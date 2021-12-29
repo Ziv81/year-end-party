@@ -38,7 +38,7 @@ public class BinaryAnswerListDTO {
     public static BinaryAnswerListDTO BINARY_OPEN_AND_USER_NOT_ANSWERED =
             BinaryAnswerListDTO.builder()
                     .status(STATUS_OPEN)
-                    .result(GlobalVariable.BINARY_QUESTION_LIST)
+                    .result(GlobalVariable.getGlobalVariableService().getBINARY_QUESTION_LIST())
                     .build();
 
     /**

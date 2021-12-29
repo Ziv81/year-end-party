@@ -1,7 +1,11 @@
 package com.changing.party.controller.api;
 
+import com.changing.party.common.constraint.annotation.MissionType;
+import com.changing.party.common.constraint.annotation.ValidateAnswerMissionIdExist;
+import com.changing.party.common.constraint.annotation.ValidateAnswerMissionType;
 import com.changing.party.response.Response;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/rest/api/mission")
 @EnableWebMvc
 @Log4j2
+@Validated
 public class MissionController {
 
     /**
@@ -24,7 +29,9 @@ public class MissionController {
      */
     @PostMapping(value = "/image/{missionId}")
     Response answerMissionImage(@PathVariable(name = "missionId")
-                                @NotBlank int missionId) {
+                                @ValidateAnswerMissionIdExist
+                                @ValidateAnswerMissionType(missionType = MissionType.IMAGE)
+                                        Integer missionId) {
         return null;
     }
 
@@ -36,7 +43,10 @@ public class MissionController {
      */
     @PostMapping(value = "/answer/{missionId}")
     Response answerMission(@PathVariable(name = "missionId")
-                           @NotBlank int missionId) {
+                           @NotBlank
+                           @ValidateAnswerMissionIdExist
+                           @ValidateAnswerMissionType(missionType = {MissionType.CHOOSE, MissionType.TEXT})
+                                   int missionId) {
         return null;
     }
 }
