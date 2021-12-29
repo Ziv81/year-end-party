@@ -1,9 +1,19 @@
 package com.changing.party.binary;
 
-import com.changing.party.binary.model.*;
-import com.changing.party.constant.GlobalVariable;
-import com.changing.party.exception.AnswerBinaryNotOpenException;
-import com.changing.party.user.UserRepository;
+import com.changing.party.common.GlobalVariable;
+import com.changing.party.common.exception.AnswerBinaryNotOpenException;
+import com.changing.party.dto.BinaryAnswerDetailDTO;
+import com.changing.party.dto.BinaryAnswerListDTO;
+import com.changing.party.model.BinaryAnswerDetailModel;
+import com.changing.party.model.BinaryAnswerModel;
+import com.changing.party.model.UserModel;
+import com.changing.party.repository.BinaryAnswerDetailRepository;
+import com.changing.party.repository.BinaryAnswerRepository;
+import com.changing.party.repository.BinaryAnswerStatisticsRepository;
+import com.changing.party.repository.UserRepository;
+import com.changing.party.request.AnswerBinaryRequest;
+import com.changing.party.service.BinaryService;
+import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +38,12 @@ class BinaryServiceTest {
     private UserRepository userRepository;
     @Mock
     private BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private BinaryService binaryService;
+
 
     @BeforeEach
     void setUp() {
@@ -38,7 +51,8 @@ class BinaryServiceTest {
                 binaryAnswerRepository,
                 binaryAnswerDetailRepository,
                 binaryAnswerStatisticsRepository,
-                userRepository);
+                userRepository,
+                userService);
         List<BinaryAnswerDetailDTO> binaryAnswerDTOList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             binaryAnswerDTOList.add(BinaryAnswerDetailDTO.builder()
@@ -60,9 +74,9 @@ class BinaryServiceTest {
     void should_return_question_id_list_when_binary_open_and_get_binary_list() {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.OPEN;
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.empty());
-        BinaryAnswerList binaryAnswerList = binaryService.getBinaryAnswerList();
+        BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
         Assertions.assertNotNull(binaryAnswerList);
-        Assertions.assertEquals(BinaryAnswerList.STATUS_OPEN, binaryAnswerList.getStatus());
+        Assertions.assertEquals(BinaryAnswerListDTO.STATUS_OPEN, binaryAnswerList.getStatus());
         Assertions.assertEquals(10, binaryAnswerList.getResult().size());
         Assertions.assertEquals(1, binaryAnswerList.getResult().get(0).getQuestionId());
         Assertions.assertNull(binaryAnswerList.getResult().get(0).getChoose());
@@ -76,10 +90,11 @@ class BinaryServiceTest {
     @Test
     void should_return_status_waiting_when_binary_open_and_user_already_answered() {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.OPEN;
+        when(userService.getUserModelFromSecurityContext()).thenReturn(UserModel.builder().build());
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.of(BinaryAnswerModel.builder().build()));
-        BinaryAnswerList binaryAnswerList = binaryService.getBinaryAnswerList();
+        BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
         Assertions.assertNotNull(binaryAnswerList);
-        Assertions.assertEquals(BinaryAnswerList.STATUS_WAITING, binaryAnswerList.getStatus());
+        Assertions.assertEquals(BinaryAnswerListDTO.STATUS_WAITING, binaryAnswerList.getStatus());
         Assertions.assertNull(binaryAnswerList.getResult());
     }
 
@@ -91,9 +106,9 @@ class BinaryServiceTest {
     void should_return_ony_status_close_when_binary_close_and_user_not_answered() {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.empty());
-        BinaryAnswerList binaryAnswerList = binaryService.getBinaryAnswerList();
+        BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
         Assertions.assertNotNull(binaryAnswerList);
-        Assertions.assertEquals(BinaryAnswerList.STATUS_CLOSE, binaryAnswerList.getStatus());
+        Assertions.assertEquals(BinaryAnswerListDTO.STATUS_CLOSE, binaryAnswerList.getStatus());
         Assertions.assertNull(binaryAnswerList.getResult());
     }
 
@@ -106,10 +121,10 @@ class BinaryServiceTest {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.of(getDefaultBinaryAnswerModel()));
 
-        BinaryAnswerList binaryAnswerList = binaryService.getBinaryAnswerList();
+        BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
 
         Assertions.assertNotNull(binaryAnswerList);
-        Assertions.assertEquals(BinaryAnswerList.STATUS_CLOSE, binaryAnswerList.getStatus());
+        Assertions.assertEquals(BinaryAnswerListDTO.STATUS_CLOSE, binaryAnswerList.getStatus());
         Assertions.assertNotNull(binaryAnswerList.getResult());
 
         Assertions.assertEquals(10, binaryAnswerList.getResult().size());
@@ -133,7 +148,7 @@ class BinaryServiceTest {
     @Test
     void should_throw_answer_binary_not_open_exception_when_answer_binary_status_not_open() {
         BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
-        Assertions.assertThrows(AnswerBinaryNotOpenException.class, () -> binaryService.answerBinaryQuestion(new AnswerBinary()));
+        Assertions.assertThrows(AnswerBinaryNotOpenException.class, () -> binaryService.answerBinaryQuestion(new AnswerBinaryRequest()));
     }
 
     BinaryAnswerModel getDefaultBinaryAnswerModel() {

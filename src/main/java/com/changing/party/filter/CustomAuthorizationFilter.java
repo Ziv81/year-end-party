@@ -1,7 +1,7 @@
 package com.changing.party.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.changing.party.shared.JWTUtil;
+import com.changing.party.common.JWTUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

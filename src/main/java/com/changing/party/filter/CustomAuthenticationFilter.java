@@ -1,13 +1,11 @@
 package com.changing.party.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.changing.party.constant.ServerConstant;
-import com.changing.party.model.response.GetTokenResponseModel;
-import com.changing.party.model.response.ResponseModel;
-import com.changing.party.shared.JWTUtil;
-import com.changing.party.user.model.LoginUser;
-import com.changing.party.user.model.User;
+import com.changing.party.common.ServerConstant;
+import com.changing.party.response.GetTokenResponse;
+import com.changing.party.response.Response;
+import com.changing.party.common.JWTUtil;
+import com.changing.party.model.LoginUser;
+import com.changing.party.response.UserResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -18,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -27,10 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -56,15 +49,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         LoginUser user = (LoginUser) authentication.getPrincipal();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        ResponseModel responseModel = ResponseModel.builder()
+        Response responseModel = Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(GetTokenResponseModel.builder()
+                .data(GetTokenResponse.builder()
                         .accessToken(JWTUtil.getJWTAccessToken(user))
                         .refreshToken(JWTUtil.getJWTRefreshToken(user))
                         .expiresIn(900)
                         .tokenType("Bearer")
-                        .userInfo(User.builder()
+                        .userInfo(UserResponse.builder()
                                 .title(user.getTitle())
                                 .userName(user.getUsername())
                                 .userId(user.getUserId())

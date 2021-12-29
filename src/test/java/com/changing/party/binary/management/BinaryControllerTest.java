@@ -1,9 +1,10 @@
 package com.changing.party.binary.management;
 
-import com.changing.party.binary.BinaryService;
-import com.changing.party.shared.JWTUtil;
-import com.changing.party.user.UserService;
-import com.changing.party.user.model.LoginUser;
+import com.changing.party.service.BinaryService;
+import com.changing.party.controller.management.ManagementBinaryController;
+import com.changing.party.common.JWTUtil;
+import com.changing.party.service.UserService;
+import com.changing.party.model.LoginUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,7 @@ class BinaryControllerTest {
     @Test
     @WithMockUser(username = "ziv", password = "password")
     void binaryStart() throws Exception {
-        mockMvc.perform(post("/management/binaryStart")
+        mockMvc.perform(post("/rest/management/binaryStart")
                         .headers(authorizationHeader))
                 .andExpect(status().isOk());
         Assertions.assertEquals(BinaryService.BinaryAnswerStatus.OPEN, BinaryService.binaryAnswerStatus);
@@ -66,7 +67,7 @@ class BinaryControllerTest {
 
     @Test
     void binaryStop() throws Exception {
-        mockMvc.perform(post("/management/binaryStop")
+        mockMvc.perform(post("/rest/management/binaryStop")
                         .headers(authorizationHeader))
                 .andExpect(status().isOk());
         Assertions.assertEquals(BinaryService.BinaryAnswerStatus.CLOSE, BinaryService.binaryAnswerStatus);

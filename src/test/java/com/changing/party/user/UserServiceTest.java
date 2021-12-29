@@ -1,9 +1,11 @@
 package com.changing.party.user;
 
-import com.changing.party.exception.UserIdNotFoundException;
-import com.changing.party.user.model.OnlyNameAndPointModel;
-import com.changing.party.user.model.User;
-import com.changing.party.user.model.UserModel;
+import com.changing.party.common.exception.UserIdNotFoundException;
+import com.changing.party.repository.UserRepository;
+import com.changing.party.model.OnlyNameAndPointModel;
+import com.changing.party.response.UserResponse;
+import com.changing.party.model.UserModel;
+import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +62,7 @@ class UserServiceTest {
     @Test
     void should_return_user_when_get_user_success() {
         when(userRepository.findByUserId(Mockito.anyInt())).thenReturn(defaultUserModel);
-        User user = userService.getUserById(200);
+        UserResponse user = userService.getUserById(200);
         Assertions.assertEquals(10, user.getUserId());
         Assertions.assertEquals("Ziv", user.getUserName());
         Assertions.assertEquals(100, user.getUserPoint());
@@ -68,7 +70,7 @@ class UserServiceTest {
     }
 
     /**
-     * 驗證當資料庫沒有回傳使用者時應拋出 {@link com.changing.party.exception.UserIdNotFoundException}
+     * 驗證當資料庫沒有回傳使用者時應拋出 {@link UserIdNotFoundException}
      */
     @Test
     void should_throw_user_id_not_found_exception_when_get_user_fail() {
@@ -94,7 +96,7 @@ class UserServiceTest {
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
-        List<User> userList = userService.getUserLeaderBoard(3).getResult();
+        List<UserResponse> userList = userService.getUserLeaderBoard(3).getResult();
         Assertions.assertEquals(3, userList.size());
         Assertions.assertEquals("First", userList.get(0).getUserName());
         Assertions.assertEquals(1, userList.get(0).getUserRank());
@@ -123,7 +125,7 @@ class UserServiceTest {
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
-        List<User> userList = userService.getUserLeaderBoard(3).getResult();
+        List<UserResponse> userList = userService.getUserLeaderBoard(3).getResult();
         Assertions.assertEquals(3, userList.size());
 
         Assertions.assertEquals("First", userList.get(0).getUserName());
@@ -155,7 +157,7 @@ class UserServiceTest {
         );
 
         when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
-        List<User> userList = userService.getUserLeaderBoard(3).getResult();
+        List<UserResponse> userList = userService.getUserLeaderBoard(3).getResult();
         Assertions.assertEquals(4, userList.size());
 
         Assertions.assertEquals("First", userList.get(0).getUserName());

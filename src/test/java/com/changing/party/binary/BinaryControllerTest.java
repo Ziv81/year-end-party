@@ -1,10 +1,12 @@
 package com.changing.party.binary;
 
-import com.changing.party.binary.model.BinaryAnswerDetailDTO;
-import com.changing.party.constant.GlobalVariable;
-import com.changing.party.shared.JWTUtil;
-import com.changing.party.user.UserService;
-import com.changing.party.user.model.LoginUser;
+import com.changing.party.common.GlobalVariable;
+import com.changing.party.common.JWTUtil;
+import com.changing.party.controller.api.BinaryController;
+import com.changing.party.dto.BinaryAnswerDetailDTO;
+import com.changing.party.model.LoginUser;
+import com.changing.party.service.BinaryService;
+import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,9 @@ class BinaryControllerTest {
     private UserService userService;
 
     @MockBean
+    private BinaryService binaryService;
+
+    @MockBean
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     LoginUser loginUser = Mockito.mock(LoginUser.class);
@@ -60,7 +65,7 @@ class BinaryControllerTest {
      */
     @Test
     void should_throw_arg_not_validate_exception_when_answered_list_size_not_validate() throws Exception {
-        this.mockMvc.perform(post("/api/binary")
+        this.mockMvc.perform(post("/rest/api/binary")
                         .content("{\"choose\":[1,2,3,2,1,1,3,2,1,1,1]}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(authorizationHeader))
@@ -80,7 +85,7 @@ class BinaryControllerTest {
                     .build());
         }
         GlobalVariable.BINARY_QUESTION_LIST = binaryAnswerDetailDTOList;
-        this.mockMvc.perform(post("/api/binary")
+        this.mockMvc.perform(post("/rest/api/binary")
                         .content("{\"choose\":[1,2,3,2,4,1,3,2,1,1]}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(authorizationHeader))

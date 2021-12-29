@@ -1,6 +1,6 @@
 package com.changing.party.user;
 
-import com.changing.party.user.model.OnlyNameAndPointModel;
+import com.changing.party.model.OnlyNameAndPointModel;
 import lombok.Builder;
 
 @Builder
