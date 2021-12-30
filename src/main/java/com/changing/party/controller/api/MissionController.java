@@ -1,18 +1,19 @@
 package com.changing.party.controller.api;
 
-import com.changing.party.common.constraint.annotation.MissionType;
+import com.changing.party.common.ServerConstant;
 import com.changing.party.common.constraint.annotation.ValidateAnswerMissionIdExist;
-import com.changing.party.common.constraint.annotation.ValidateAnswerMissionType;
+import com.changing.party.common.exception.MissionAlreadyAnswerException;
+import com.changing.party.common.exception.MissionIDNotFoundException;
+import com.changing.party.common.exception.MissionTypeNotMappingException;
+import com.changing.party.common.exception.UnknownImageFormatException;
+import com.changing.party.request.AnswerMissionImage;
+import com.changing.party.response.MissionAnswerResponse;
 import com.changing.party.response.Response;
+import com.changing.party.service.MissionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/rest/api/mission")
@@ -20,6 +21,12 @@ import javax.validation.constraints.NotBlank;
 @Log4j2
 @Validated
 public class MissionController {
+
+    private MissionService missionService;
+
+    public MissionController(MissionService missionService) {
+        this.missionService = missionService;
+    }
 
     /**
      * 回答照片題目
@@ -30,9 +37,18 @@ public class MissionController {
     @PostMapping(value = "/image/{missionId}")
     Response answerMissionImage(@PathVariable(name = "missionId")
                                 @ValidateAnswerMissionIdExist
-                                @ValidateAnswerMissionType(missionType = MissionType.IMAGE)
-                                        Integer missionId) {
-        return null;
+                                        Integer missionId,
+                                @RequestBody AnswerMissionImage answerMissionImage)
+            throws MissionIDNotFoundException,
+            MissionTypeNotMappingException,
+            UnknownImageFormatException,
+            MissionAlreadyAnswerException {
+        missionService.answerImageMission(missionId, answerMissionImage.getAnswer());
+        return Response.builder()
+                .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
+                .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
+                .data(MissionAnswerResponse.getMissionAnswerReviewResponse())
+                .build();
     }
 
     /**
@@ -43,10 +59,8 @@ public class MissionController {
      */
     @PostMapping(value = "/answer/{missionId}")
     Response answerMission(@PathVariable(name = "missionId")
-                           @NotBlank
                            @ValidateAnswerMissionIdExist
-                           @ValidateAnswerMissionType(missionType = {MissionType.CHOOSE, MissionType.TEXT})
-                                   int missionId) {
+                                   Integer missionId) {
         return null;
     }
 }

@@ -10,6 +10,6 @@ public class AnswerMissionIdExistValidator implements ConstraintValidator<Valida
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return value > 0 && value < GlobalVariable.getGlobalVariableService().getMISSION_QUESTION_LIST().size();
+        return value > 0 && value <= GlobalVariable.getGlobalVariableService().getMISSION_QUESTION_LIST().size();
     }
 }

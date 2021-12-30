@@ -22,7 +22,7 @@ import java.util.Optional;
 @Component
 public class ReadMissionQuestionRunner implements ApplicationRunner {
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         Resource resource = new ClassPathResource("MissionAnswer.json");
         try (InputStream inputStream = resource.getInputStream()) {
             List<MissionQuestionConfigDTO> missionQuestionConfigDTOS = new ArrayList<>();
@@ -30,8 +30,9 @@ public class ReadMissionQuestionRunner implements ApplicationRunner {
             JsonNode jsonNode = mapper.readTree(new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8));
             jsonNode.get("missions").forEach(question -> missionQuestionConfigDTOS.add(MissionQuestionConfigDTO.builder()
                     .missionId(question.get("missionId").asInt())
-                    .missionType(question.get("missionType").asInt())
+                    .missionType(MissionQuestionConfigDTO.MissionType.getMissionType(question.get("missionType").asInt()))
                     .missionAnswer(getMissionAnswerList(question.get("missionAnswer")))
+                    .missionReward(question.get("missionReward").asInt())
                     .build()));
             GlobalVariable.getGlobalVariableService().setMISSION_QUESTION_LIST(missionQuestionConfigDTOS);
         } catch (Exception ex) {

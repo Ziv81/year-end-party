@@ -1,13 +1,12 @@
 package com.changing.party.common.exception.handler;
 
 import com.changing.party.common.ServerConstant;
-import com.changing.party.common.exception.AnswerBinaryNotOpenException;
-import com.changing.party.common.exception.GetUserRankException;
-import com.changing.party.common.exception.UserIdNotFoundException;
+import com.changing.party.common.exception.*;
 import com.changing.party.response.Response;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -97,6 +96,56 @@ public class ServerExceptionHandler {
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
                         .errorMessage("Input type error check input type.")
+                        .build());
+    }
+
+    @ExceptionHandler(MissionIDNotFoundException.class)
+    public Object missionIDNotFoundExceptionHandler(MissionIDNotFoundException exception) {
+        log.error("Mission id not found {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Mission id not found.")
+                        .build());
+    }
+
+    @ExceptionHandler(MissionTypeNotMappingException.class)
+    public Object missionTypeNotMappingExceptionHandler(MissionTypeNotMappingException exception) {
+        log.error("Mission type not mapping {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Mission type not mapping. Check server mission config and url.")
+                        .build());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Object httpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        log.error("Http message not readable exception", exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Http message not readable.")
+                        .build());
+    }
+
+    @ExceptionHandler(UnknownImageFormatException.class)
+    public Object unknownImageFormatExceptionHandler(UnknownImageFormatException exception) {
+        log.error("Unknown image format exception. Image content {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Unknown image format exception.")
+                        .build());
+    }
+
+    @ExceptionHandler(MissionAlreadyAnswerException.class)
+    public Object missionAlreadyAnswerExceptionHandler(MissionAlreadyAnswerException exception) {
+        log.error("Mission already answer.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Mission already answer.")
                         .build());
     }
 

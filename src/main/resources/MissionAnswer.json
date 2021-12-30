@@ -2,23 +2,27 @@
   "missions": [
     {
       "missionId": 1,
-      "missionType": 1
+      "missionType": 1,
+      "missionReward":200
     },
     {
       "missionId": 2,
-      "missionType": 1
+      "missionType": 1,
+      "missionReward":300
     },
     {
       "missionId": 3,
       "missionType": 3,
       "missionAnswer": [
         "楊文和"
-      ]
+      ],
+      "missionReward":100
     },
     {
       "missionId": 4,
       "missionType": 2,
-      "missionAnswer": 1
+      "missionAnswer": 1,
+      "missionReward":100
     },
     {
       "missionId": 5,
@@ -26,31 +30,36 @@
       "missionAnswer": [
         "暖手",
         "洗腳"
-      ]
+      ],
+      "missionReward":100
     },
     {
       "missionId": 6,
       "missionType": 3,
       "missionAnswer": [
         "窗櫺"
-      ]
+      ],
+      "missionReward":100
     },
     {
       "missionId": 7,
       "missionType": 2,
-      "missionAnswer": 2
+      "missionAnswer": 2,
+      "missionReward":100
     },
     {
       "missionId": 8,
       "missionType": 3,
       "missionAnswer": [
         "4"
-      ]
+      ],
+      "missionReward":100
     },
     {
       "missionId": 9,
       "missionType": 2,
-      "missionAnswer": 3
+      "missionAnswer": 3,
+      "missionReward":100
     }
   ]
 }

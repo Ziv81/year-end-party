@@ -4,12 +4,15 @@ import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.changing.party.dto.MissionQuestionConfigDTO;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@Component
 public class GlobalVariable {
 
     private static GlobalVariable globalVariable = null;

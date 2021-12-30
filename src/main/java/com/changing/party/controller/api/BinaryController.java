@@ -1,9 +1,9 @@
 package com.changing.party.controller.api;
 
-import com.changing.party.service.BinaryService;
-import com.changing.party.request.AnswerBinaryRequest;
 import com.changing.party.common.ServerConstant;
+import com.changing.party.request.AnswerBinaryRequest;
 import com.changing.party.response.Response;
+import com.changing.party.service.BinaryService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @EnableWebMvc
 @Log4j2
 public class BinaryController {
-    BinaryService binaryService;
+    private BinaryService binaryService;
 
     public BinaryController(BinaryService binaryService) {
         this.binaryService = binaryService;
@@ -36,7 +36,6 @@ public class BinaryController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data("")
                 .build();
     }
 }
