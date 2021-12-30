@@ -40,7 +40,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                 } catch (Exception ex) {
                     log.error("Verify JWT token fail.", ex);
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     new ObjectMapper().writeValue(response.getOutputStream(),
                             Response.builder()
                                     .errorCode(ServerConstant.SERVER_FAIL_CODE)
@@ -48,7 +48,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                                     .build());
                 }
             } else {
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 new ObjectMapper().writeValue(response.getOutputStream(),
                         Response.builder()
                                 .errorCode(ServerConstant.SERVER_FAIL_CODE)
