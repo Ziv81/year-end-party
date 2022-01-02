@@ -5,10 +5,13 @@ import com.changing.party.common.exception.MissionAlreadyAnswerException;
 import com.changing.party.common.exception.MissionIDNotFoundException;
 import com.changing.party.common.exception.MissionTypeNotMappingException;
 import com.changing.party.common.exception.UnknownImageFormatException;
+import com.changing.party.dto.MissionAnswerModelDto;
 import com.changing.party.dto.MissionQuestionConfigDTO;
 import com.changing.party.model.MissionAnswerModel;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.MissionAnswerRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,22 +28,76 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Log4j2
 @Service
 public class MissionService {
 
-    MissionAnswerRepository missionAnswerModelRepository;
+
+    @Getter
+    @AllArgsConstructor
+    public enum MissionAnswerStatus {
+        OPEN(1),
+        CLOSE(2);
+        int status;
+    }
+
+    private static MissionAnswerStatus missionAnswerStatus = MissionAnswerStatus.OPEN;
+
+    MissionAnswerRepository missionAnswerRepository;
     UserService userService;
 
-    public MissionService(MissionAnswerRepository missionAnswerModelRepository, UserService userService) {
-        this.missionAnswerModelRepository = missionAnswerModelRepository;
+    public MissionService(MissionAnswerRepository missionAnswerRepository, UserService userService) {
+        this.missionAnswerRepository = missionAnswerRepository;
         this.userService = userService;
     }
 
     @Value("${year-end-party.mission.image.save.path}")
     private String imageSaveDirectory;
 
+    /**
+     * 回傳答題歷史清單
+     *
+     * @return
+     */
+    public List<MissionAnswerModelDto> getMissionAnswerHistory() {
+        Set<MissionAnswerModel> missionAnswerModelStream = missionAnswerRepository
+                .findByUserModel_UserIdOrderByMissionIdAsc(userService.getUserModelFromSecurityContext().getUserId());
+        List<MissionAnswerModelDto> missionAnswerModelDTOs = new ArrayList<>();
+        for (int i = 0; i < GlobalVariable.getGlobalVariableService().getMISSION_QUESTION_LIST().size(); i++) {
+            int missionId = i + 1;
+            Optional<MissionAnswerModel> missionAnswerModel = missionAnswerModelStream
+                    .stream()
+                    .filter(x -> x.getMissionId().equals(missionId))
+                    .findFirst();
+            if (missionAnswerModel.isPresent()) {
+                //使用者已經完成作答
+                missionAnswerModelDTOs.add(
+                        MissionAnswerModelDto.getMissionAnswerModelDTO(missionAnswerModel.get()));
+            } else {
+                //使用者未完成作答
+                missionAnswerModelDTOs.add(
+                        MissionAnswerModelDto.builder()
+                                .missionId(missionId)
+                                .answerReviewStatus(MissionAnswerModelDto.AnswerReviewStatus.REVIEW)
+                                .build()
+                );
+            }
+        }
+        return missionAnswerModelDTOs;
+    }
+
+    /**
+     * 回答圖片類型的任務
+     *
+     * @param missionId 任務序號
+     * @param answer    圖片清單
+     * @throws MissionIDNotFoundException     任務序號不存在
+     * @throws MissionTypeNotMappingException 任務類型不屬於圖片
+     * @throws UnknownImageFormatException    上傳圖片類型不支援
+     * @throws MissionAlreadyAnswerException  任務已經回答過
+     */
     public void answerImageMission(Integer missionId, List<String> answer)
             throws MissionIDNotFoundException,
             MissionTypeNotMappingException,
@@ -59,7 +116,7 @@ public class MissionService {
 
         UserModel user = userService.getUserModelFromSecurityContext();
 
-        if (missionAnswerModelRepository.existsByUserModel_UserIdAndMissionId(user.getUserId(), missionId)) {
+        if (missionAnswerRepository.existsByUserModel_UserIdAndMissionId(user.getUserId(), missionId)) {
             throw new MissionAlreadyAnswerException();
         }
         List<String> savePaths = new ArrayList<>();
@@ -71,7 +128,7 @@ public class MissionService {
                 log.error("Save image occur exception.", e);
             }
         }
-        missionAnswerModelRepository.save(MissionAnswerModel.builder()
+        missionAnswerRepository.save(MissionAnswerModel.builder()
                 .userModel(user)
                 .missionId(missionId)
                 .answerReviewStatus(MissionAnswerModel.AnswerReviewStatus.REVIEW)
@@ -107,6 +164,14 @@ public class MissionService {
     }
 
     public void clearAllMissionAnswerData() {
-        missionAnswerModelRepository.deleteAll();
+        missionAnswerRepository.deleteAll();
+    }
+
+    public static MissionAnswerStatus getMissionAnswerStatus() {
+        return missionAnswerStatus;
+    }
+
+    public static void setMissionAnswerStatus(MissionAnswerStatus missionAnswerStatus) {
+        MissionService.missionAnswerStatus = missionAnswerStatus;
     }
 }

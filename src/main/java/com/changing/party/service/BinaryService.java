@@ -16,6 +16,7 @@ import com.changing.party.request.AnswerBinaryRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +52,8 @@ public class BinaryService {
     /**
      * 贏得二位元少數決時，單題給予的獎勵
      */
-    private static int binaryWinnerScore = 50;
+    @Value("${year-end-party.binary.winner.score}")
+    private static int binaryWinnerScore;
 
     public static BinaryAnswerStatus binaryAnswerStatus = BinaryAnswerStatus.OPEN;
 
