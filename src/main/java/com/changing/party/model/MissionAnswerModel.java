@@ -1,11 +1,9 @@
 package com.changing.party.model;
 
-import com.changing.party.common.converter.MissionAnswerStatusConverter;
-import com.changing.party.common.exception.MissionAnswerStatusUnknownException;
+import com.changing.party.common.AnswerReviewStatus;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Date;
 
 @Entity
@@ -22,7 +20,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class MissionAnswerModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -33,9 +31,7 @@ public class MissionAnswerModel {
     @Column(name = "missionId", nullable = false)
     private Integer missionId;
 
-    @Enumerated
     @Column(name = "answerReviewStatus", nullable = false)
-    @Convert(converter = MissionAnswerStatusConverter.class)
     private AnswerReviewStatus answerReviewStatus;
 
     @Column(name = "answer_content", nullable = false)
@@ -47,21 +43,4 @@ public class MissionAnswerModel {
     @Temporal(TemporalType.DATE)
     @Column(name = "answerDate", nullable = false)
     private Date answerDate;
-
-    public enum AnswerReviewStatus {
-        SUCCESS(1), FAIL(2), REVIEW(3);
-        @Getter
-        private final int status;
-
-        AnswerReviewStatus(int status) {
-            this.status = status;
-        }
-
-        public static AnswerReviewStatus convert(Integer status) throws MissionAnswerStatusUnknownException {
-            return Arrays.stream(AnswerReviewStatus.values())
-                    .filter(x -> x.getStatus() == status)
-                    .findAny()
-                    .orElseThrow(() -> new MissionAnswerStatusUnknownException(status));
-        }
-    }
 }

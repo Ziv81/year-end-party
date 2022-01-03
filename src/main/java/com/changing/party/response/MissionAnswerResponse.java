@@ -1,10 +1,9 @@
 package com.changing.party.response;
 
-import com.changing.party.dto.MissionAnswerModelDto;
-import com.changing.party.model.MissionAnswerModel;
+import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.dto.MissionAnswerDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
-import java.util.List;
 
 
 @Getter
@@ -12,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MissionAnswerResponse {
     private Integer missionId;
     private Integer missionStatus;
@@ -26,7 +26,7 @@ public class MissionAnswerResponse {
      * @param missionReward
      * @return
      */
-    public static MissionAnswerResponse getImageMissionAnswer(MissionAnswerModelDto dto, Integer missionReward) {
+    public static MissionAnswerResponse getImageMissionAnswer(MissionAnswerDTO dto, Integer missionReward) {
         return MissionAnswerResponse.builder()
                 .missionId(dto.getMissionId())
                 .missionStatus(dto.getAnswerReviewStatus().getStatus())
@@ -42,7 +42,7 @@ public class MissionAnswerResponse {
      * @param missionReward
      * @return
      */
-    public static MissionAnswerResponse getDefaultMissionAnswer(MissionAnswerModelDto dto, Integer missionReward) {
+    public static MissionAnswerResponse getDefaultMissionAnswer(MissionAnswerDTO dto, Integer missionReward) {
         return MissionAnswerResponse.builder()
                 .missionId(dto.getMissionId())
                 .missionStatus(dto.getAnswerReviewStatus().getStatus())
@@ -58,7 +58,7 @@ public class MissionAnswerResponse {
      */
     public static MissionAnswerResponse getMissionAnswerReviewResponse() {
         return MissionAnswerResponse.builder()
-                .missionStatus(MissionAnswerModel.AnswerReviewStatus.REVIEW.getStatus())
+                .missionStatus(AnswerReviewStatus.REVIEW.getStatus())
                 .score(0)
                 .build();
     }
@@ -70,7 +70,7 @@ public class MissionAnswerResponse {
      */
     public static MissionAnswerResponse getMissionWrongAnswerResponse() {
         return MissionAnswerResponse.builder()
-                .missionStatus(MissionAnswerModel.AnswerReviewStatus.FAIL.getStatus())
+                .missionStatus(AnswerReviewStatus.FAIL.getStatus())
                 .score(0)
                 .build();
     }
@@ -80,7 +80,7 @@ public class MissionAnswerResponse {
      */
     public static MissionAnswerResponse getMissionCorrectAnswerResponse() {
         return MissionAnswerResponse.builder()
-                .missionStatus(MissionAnswerModel.AnswerReviewStatus.SUCCESS.getStatus())
+                .missionStatus(AnswerReviewStatus.SUCCESS.getStatus())
                 .score(0)
                 .build();
     }

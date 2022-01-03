@@ -3,18 +3,13 @@ package com.changing.party.controller.api;
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.ServerConstant;
 import com.changing.party.common.constraint.annotation.ValidateAnswerMissionIdExist;
-import com.changing.party.common.exception.MissionAlreadyAnswerException;
-import com.changing.party.common.exception.MissionIDNotFoundException;
-import com.changing.party.common.exception.MissionTypeNotMappingException;
-import com.changing.party.common.exception.UnknownImageFormatException;
-import com.changing.party.dto.MissionAnswerModelDto;
-import com.changing.party.request.AnswerMissionImage;
+import com.changing.party.common.exception.*;
+import com.changing.party.dto.MissionAnswerDTO;
+import com.changing.party.request.AnswerMissionDefault;
+import com.changing.party.request.AnswerMissionImageRequest;
 import com.changing.party.response.MissionAnswerResponse;
 import com.changing.party.response.Response;
-import com.changing.party.service.BinaryService;
 import com.changing.party.service.MissionService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +33,8 @@ public class MissionController {
     }
 
     @GetMapping
-    public  Response getMissionAnswerHistory() {
-        List<MissionAnswerModelDto> responseList = missionService.getMissionAnswerHistory();
+    public Response getMissionAnswerHistory() {
+        List<MissionAnswerDTO> responseList = missionService.getMissionAnswerHistory();
         List<MissionAnswerResponse> missionAnswerResponses = new ArrayList<>();
         responseList.forEach(x -> {
             switch (GlobalVariable.getGlobalVariableService().getMISSION_ID_TYPE_MAP().get(x.getMissionId())) {
@@ -64,7 +59,7 @@ public class MissionController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(MissionAnswerResponse.getMissionAnswerReviewResponse())
+                .data(missionAnswerResponses)
                 .build();
     }
 
@@ -75,14 +70,15 @@ public class MissionController {
      * @return
      */
     @PostMapping(value = "/image/{missionId}")
-    public  Response answerMissionImage(@PathVariable(name = "missionId")
-                                @ValidateAnswerMissionIdExist
-                                        Integer missionId,
-                                @RequestBody AnswerMissionImage answerMissionImage)
+    public Response answerMissionImage(@PathVariable(name = "missionId")
+                                       @ValidateAnswerMissionIdExist
+                                               Integer missionId,
+                                       @RequestBody AnswerMissionImageRequest answerMissionImage)
             throws MissionIDNotFoundException,
             MissionTypeNotMappingException,
             UnknownImageFormatException,
-            MissionAlreadyAnswerException {
+            MissionAlreadyAnswerException,
+            MissionAnswerImageListSizeNotAcceptException {
         missionService.answerImageMission(missionId, answerMissionImage.getAnswer());
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
@@ -99,8 +95,21 @@ public class MissionController {
      */
     @PostMapping(value = "/answer/{missionId}")
     public Response answerMission(@PathVariable(name = "missionId")
-                           @ValidateAnswerMissionIdExist
-                                   Integer missionId) {
-        return null;
+                                  @ValidateAnswerMissionIdExist
+                                          Integer missionId,
+                                  @RequestBody AnswerMissionDefault answerMissionDefault)
+            throws MissionAlreadyAnswerException,
+            MissionIDNotFoundException {
+        boolean answerCorrect = missionService.answerMission(missionId, answerMissionDefault.getAnswer());
+        MissionAnswerResponse missionAnswerResponse = MissionAnswerResponse.getMissionWrongAnswerResponse();
+        if (answerCorrect) {
+            missionAnswerResponse = MissionAnswerResponse.getMissionCorrectAnswerResponse();
+            missionAnswerResponse.setScore(GlobalVariable.getGlobalVariableService().getMISSION_ID_REWARD_MAP().get(missionId));
+        }
+        return Response.builder()
+                .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
+                .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
+                .data(missionAnswerResponse)
+                .build();
     }
 }

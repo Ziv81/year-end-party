@@ -53,10 +53,15 @@ public class ReadMissionQuestionRunner implements ApplicationRunner {
     private List<String> getMissionAnswerList(JsonNode jsonNode) {
         List<String> results = new ArrayList<>();
         Optional.ofNullable(jsonNode).ifPresent(
-                notNullJsonNode ->
+                notNullJsonNode -> {
+                    if (notNullJsonNode.isArray()) {
                         notNullJsonNode.forEach(
                                 x -> results.add(x.asText())
-                        ));
+                        );
+                    } else {
+                        results.add(notNullJsonNode.asText());
+                    }
+                });
         return results;
     }
 }
