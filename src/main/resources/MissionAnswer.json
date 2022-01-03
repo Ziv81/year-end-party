@@ -3,12 +3,18 @@
     {
       "missionId": 1,
       "missionType": 1,
-      "missionReward":200
+      "missionReward":200,
+      "missionAnswer": [
+        "2"
+      ]
     },
     {
       "missionId": 2,
       "missionType": 1,
-      "missionReward":300
+      "missionReward":300,
+      "missionAnswer": [
+        "3"
+      ]
     },
     {
       "missionId": 3,

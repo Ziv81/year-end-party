@@ -1,36 +1,35 @@
 package com.changing.party.dto;
 
-import com.changing.party.common.exception.MissionAnswerStatusUnknownException;
+import com.changing.party.common.AnswerReviewStatus;
 import com.changing.party.model.MissionAnswerModel;
 import com.changing.party.model.UserModel;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MissionAnswerModelDto implements Serializable {
+public class MissionAnswerDTO implements Serializable {
     private UserModel userModel;
     private Integer missionId;
-    private AnswerReviewStatus answerReviewStatus;
+    private AnswerReviewDTOStatus answerReviewStatus;
     private String answerContent;
     private Integer score;
     private Date answerDate;
 
-    public enum AnswerReviewStatus {
+    public enum AnswerReviewDTOStatus {
         NOT_ANSWER(0), SUCCESS(1), FAIL(2), REVIEW(3);
         @Getter
         private final int status;
 
-        AnswerReviewStatus(int status) {
+        AnswerReviewDTOStatus(int status) {
             this.status = status;
         }
 
-        public static AnswerReviewStatus convert(MissionAnswerModel.AnswerReviewStatus status) {
+        public static AnswerReviewDTOStatus convert(AnswerReviewStatus status) {
             switch (status) {
                 case SUCCESS:
                     return SUCCESS;
@@ -44,11 +43,11 @@ public class MissionAnswerModelDto implements Serializable {
         }
     }
 
-    public static MissionAnswerModelDto getMissionAnswerModelDTO(MissionAnswerModel missionAnswerModel) {
-        return MissionAnswerModelDto.builder()
+    public static MissionAnswerDTO getMissionAnswerModelDTO(MissionAnswerModel missionAnswerModel) {
+        return MissionAnswerDTO.builder()
                 .userModel(missionAnswerModel.getUserModel())
                 .missionId(missionAnswerModel.getMissionId())
-                .answerReviewStatus(AnswerReviewStatus.convert(missionAnswerModel.getAnswerReviewStatus()))
+                .answerReviewStatus(AnswerReviewDTOStatus.convert(missionAnswerModel.getAnswerReviewStatus()))
                 .answerContent(missionAnswerModel.getAnswerContent())
                 .score(missionAnswerModel.getScore())
                 .answerDate(missionAnswerModel.getAnswerDate())

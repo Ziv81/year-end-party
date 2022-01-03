@@ -1,9 +1,9 @@
 package com.changing.party.controller.management;
 
-import com.changing.party.service.BinaryService;
-import com.changing.party.response.BinaryAnswerStatisticsResponse;
 import com.changing.party.common.ServerConstant;
+import com.changing.party.response.BinaryAnswerStatisticsResponse;
 import com.changing.party.response.Response;
+import com.changing.party.service.BinaryService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +26,13 @@ public class ManagementBinaryController {
 
     @PostMapping(value = "/binaryStart")
     public ResponseEntity binaryStart() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.OPEN;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.OPEN);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/binaryStop")
     public ResponseEntity binaryStop() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.CLOSE);
         binaryService.squareUpScore();
         binaryService.updateUserScoreByBinarySquareUp();
         return ResponseEntity.ok().build();

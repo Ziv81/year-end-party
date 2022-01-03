@@ -49,7 +49,6 @@ class BinaryServiceTest {
                 binaryAnswerRepository,
                 binaryAnswerDetailRepository,
                 binaryAnswerStatisticsRepository,
-                userRepository,
                 userService);
         List<BinaryAnswerDetailDTO> binaryAnswerDTOList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -70,7 +69,7 @@ class BinaryServiceTest {
      */
     @Test
     void should_return_question_id_list_when_binary_open_and_get_binary_list() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.OPEN;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.OPEN);
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.empty());
         BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
         Assertions.assertNotNull(binaryAnswerList);
@@ -87,7 +86,7 @@ class BinaryServiceTest {
      */
     @Test
     void should_return_status_waiting_when_binary_open_and_user_already_answered() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.OPEN;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.OPEN);
         when(userService.getUserModelFromSecurityContext()).thenReturn(UserModel.builder().build());
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.of(BinaryAnswerModel.builder().build()));
         BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
@@ -102,7 +101,7 @@ class BinaryServiceTest {
      */
     @Test
     void should_return_ony_status_close_when_binary_close_and_user_not_answered() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.CLOSE);
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.empty());
         BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
         Assertions.assertNotNull(binaryAnswerList);
@@ -116,7 +115,7 @@ class BinaryServiceTest {
      */
     @Test
     void should_return_status_close_and_history_and_score_when_binary_close_and_user_already_answered() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.CLOSE);
         when(binaryAnswerRepository.findByAnsweredUser_UserId(Mockito.anyInt())).thenReturn(Optional.of(getDefaultBinaryAnswerModel()));
 
         BinaryAnswerListDTO binaryAnswerList = binaryService.getBinaryAnswerList();
@@ -145,7 +144,7 @@ class BinaryServiceTest {
      */
     @Test
     void should_throw_answer_binary_not_open_exception_when_answer_binary_status_not_open() {
-        BinaryService.binaryAnswerStatus = BinaryService.BinaryAnswerStatus.CLOSE;
+        BinaryService.setBinaryAnswerStatus(BinaryService.BinaryAnswerStatus.CLOSE);
         Assertions.assertThrows(AnswerBinaryNotOpenException.class, () -> binaryService.answerBinaryQuestion(new AnswerBinaryRequest()));
     }
 

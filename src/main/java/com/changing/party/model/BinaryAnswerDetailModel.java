@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class BinaryAnswerDetailModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer binaryAnswerDetailId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

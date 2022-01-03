@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class AnswerMissionImage {
+public class AnswerMissionImageRequest {
 
     // base64 image list
     @Size(min = 1)

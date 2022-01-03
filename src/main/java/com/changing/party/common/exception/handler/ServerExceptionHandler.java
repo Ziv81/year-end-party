@@ -149,6 +149,33 @@ public class ServerExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(ImageIdNotFoundException.class)
+    public Object imageIdNotFoundExceptionHandler(ImageIdNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Image id not exist.")
+                        .build());
+    }
+
+    @ExceptionHandler(ImageStatusNotReview.class)
+    public Object imageStatusNotReviewExceptionHandler(ImageStatusNotReview exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Image status not review.")
+                        .build());
+    }
+
+    @ExceptionHandler(MissionAnswerImageListSizeNotAcceptException.class)
+    public Object missionAnswerImageListSizeNotAcceptExceptionHandler(MissionAnswerImageListSizeNotAcceptException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Mission answer image list size not accept.")
+                        .build());
+    }
+
     @ExceptionHandler(Exception.class)
     public Object unCaughtException(Exception exception) {
         log.error("Uncaught exception", exception);

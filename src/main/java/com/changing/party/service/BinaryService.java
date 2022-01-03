@@ -7,11 +7,9 @@ import com.changing.party.dto.BinaryAnswerStatisticsDTO;
 import com.changing.party.model.BinaryAnswerDetailModel;
 import com.changing.party.model.BinaryAnswerModel;
 import com.changing.party.model.BinaryAnswerStatisticsModel;
-import com.changing.party.model.UserModel;
 import com.changing.party.repository.BinaryAnswerDetailRepository;
 import com.changing.party.repository.BinaryAnswerRepository;
 import com.changing.party.repository.BinaryAnswerStatisticsRepository;
-import com.changing.party.repository.UserRepository;
 import com.changing.party.request.AnswerBinaryRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,12 +53,11 @@ public class BinaryService {
     @Value("${year-end-party.binary.winner.score}")
     private static int binaryWinnerScore;
 
-    public static BinaryAnswerStatus binaryAnswerStatus = BinaryAnswerStatus.OPEN;
+    private static BinaryAnswerStatus binaryAnswerStatus = BinaryAnswerStatus.OPEN;
 
     BinaryAnswerRepository binaryAnswerRepository;
     BinaryAnswerDetailRepository binaryAnswerDetailRepository;
     BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
-    UserRepository userRepository;
     UserService userService;
 
 
@@ -73,7 +70,6 @@ public class BinaryService {
      * @return
      */
     public BinaryAnswerListDTO getBinaryAnswerList() {
-        UserModel temp = userService.getUserModelFromSecurityContext();
         Optional<BinaryAnswerModel> binaryAnswerModelOptional =
                 binaryAnswerRepository.findByAnsweredUser_UserId(userService.getUserModelFromSecurityContext().getUserId());
         //使用者已經填寫完成
@@ -127,16 +123,13 @@ public class BinaryService {
      */
     public void updateUserScoreByBinarySquareUp() {
         binaryAnswerRepository.findAll().forEach(
-                binaryAnswerModel -> {
-                    UserModel user = binaryAnswerModel.getAnsweredUser();
-                    user.setUserPoint(user.getUserPoint()
-                            + binaryAnswerModel
-                            .getBinaryAnswerDetails()
-                            .stream()
-                            .mapToInt(BinaryAnswerDetailModel::getScore)
-                            .sum());
-                    userRepository.save(user);
-                }
+                binaryAnswerModel ->
+                        userService.updateUserPoint(binaryAnswerModel
+                                .getBinaryAnswerDetails()
+                                .stream()
+                                .mapToInt(BinaryAnswerDetailModel::getScore)
+                                .sum())
+
         );
     }
 
@@ -228,4 +221,11 @@ public class BinaryService {
         binaryAnswerStatisticsRepository.deleteAll();
     }
 
+    public static BinaryAnswerStatus getBinaryAnswerStatus() {
+        return binaryAnswerStatus;
+    }
+
+    public static void setBinaryAnswerStatus(BinaryAnswerStatus binaryAnswerStatus) {
+        BinaryService.binaryAnswerStatus = binaryAnswerStatus;
+    }
 }

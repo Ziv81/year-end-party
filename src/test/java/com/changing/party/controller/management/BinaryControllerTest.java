@@ -1,10 +1,9 @@
 package com.changing.party.controller.management;
 
-import com.changing.party.service.BinaryService;
-import com.changing.party.controller.management.ManagementBinaryController;
 import com.changing.party.common.JWTUtil;
-import com.changing.party.service.UserService;
 import com.changing.party.model.LoginUser;
+import com.changing.party.service.BinaryService;
+import com.changing.party.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ class BinaryControllerTest {
         mockMvc.perform(post("/rest/management/binaryStart")
                         .headers(authorizationHeader))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(BinaryService.BinaryAnswerStatus.OPEN, BinaryService.binaryAnswerStatus);
+        Assertions.assertEquals(BinaryService.BinaryAnswerStatus.OPEN, BinaryService.getBinaryAnswerStatus());
     }
 
     @Test
@@ -70,6 +69,6 @@ class BinaryControllerTest {
         mockMvc.perform(post("/rest/management/binaryStop")
                         .headers(authorizationHeader))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(BinaryService.BinaryAnswerStatus.CLOSE, BinaryService.binaryAnswerStatus);
+        Assertions.assertEquals(BinaryService.BinaryAnswerStatus.CLOSE, BinaryService.getBinaryAnswerStatus());
     }
 }

@@ -19,7 +19,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class BinaryAnswerStatisticsModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 

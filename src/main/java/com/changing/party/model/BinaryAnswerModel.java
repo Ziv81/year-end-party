@@ -20,7 +20,7 @@ import java.util.Set;
 public class BinaryAnswerModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "binaryAnswerId")
     Integer binaryAnswerId;
 
