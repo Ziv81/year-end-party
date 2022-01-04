@@ -1,6 +1,6 @@
 package com.changing.party.service;
 
-import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.ServerConstant;
 import com.changing.party.common.exception.*;
@@ -275,6 +275,7 @@ public class MissionService {
                 .answerContent(answer)
                 .answerDate(new Date())
                 .build());
+        userService.updateUserPoint(missionQuestionConfigDTO.getMissionReward());
         return answerCorrect;
     }
 

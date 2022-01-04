@@ -7,6 +7,7 @@ import com.changing.party.common.exception.*;
 import com.changing.party.dto.MissionAnswerDTO;
 import com.changing.party.request.AnswerMissionDefault;
 import com.changing.party.request.AnswerMissionImageRequest;
+import com.changing.party.response.MissionAnswerListResponse;
 import com.changing.party.response.MissionAnswerResponse;
 import com.changing.party.response.Response;
 import com.changing.party.service.MissionService;
@@ -59,7 +60,10 @@ public class MissionController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(missionAnswerResponses)
+                .data(MissionAnswerListResponse.builder()
+                        .result(missionAnswerResponses)
+                        .status(MissionService.getMissionAnswerStatus().getStatus())
+                        .build())
                 .build();
     }
 

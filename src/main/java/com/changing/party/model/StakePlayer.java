@@ -1,16 +1,18 @@
 package com.changing.party.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@AllArgsConstructor
 @Entity
-@Table(name = "stack_player")
+@Table(name = "stack_player", indexes = {
+        @Index(name = "idx_stakeplayer_id", columnList = "id"),
+        @Index(name = "idx_stakeplayer_stake_id", columnList = "stake_id")
+})
 public class StakePlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

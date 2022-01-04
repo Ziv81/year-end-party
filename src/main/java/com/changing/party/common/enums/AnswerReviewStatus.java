@@ -1,4 +1,4 @@
-package com.changing.party.common;
+package com.changing.party.common.enums;
 
 import com.changing.party.common.exception.MissionAnswerStatusUnknownException;
 import lombok.Getter;

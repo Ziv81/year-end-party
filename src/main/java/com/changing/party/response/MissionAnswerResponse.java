@@ -1,6 +1,6 @@
 package com.changing.party.response;
 
-import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.dto.MissionAnswerDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

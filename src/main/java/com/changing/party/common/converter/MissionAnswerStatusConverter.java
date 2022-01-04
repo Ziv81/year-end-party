@@ -1,6 +1,6 @@
 package com.changing.party.common.converter;
 
-import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import lombok.SneakyThrows;
 
 import javax.persistence.AttributeConverter;

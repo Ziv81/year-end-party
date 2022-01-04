@@ -1,7 +1,6 @@
 package com.changing.party.model;
 
-import com.changing.party.common.AnswerReviewStatus;
-import com.changing.party.common.converter.MissionAnswerStatusConverter;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import lombok.*;
 
 import javax.persistence.*;

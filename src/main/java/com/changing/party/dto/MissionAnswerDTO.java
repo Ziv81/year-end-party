@@ -1,6 +1,6 @@
 package com.changing.party.dto;
 
-import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.model.MissionAnswerModel;
 import com.changing.party.model.UserModel;
 import lombok.*;

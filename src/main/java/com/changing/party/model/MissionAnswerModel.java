@@ -1,6 +1,6 @@
 package com.changing.party.model;
 
-import com.changing.party.common.AnswerReviewStatus;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +9,8 @@ import java.util.Date;
 @Entity
 @Table(name = "mission_answer_model", indexes = {
         @Index(name = "idx_missionanswermodel_userid", columnList = "user_model_user_id"),
-        @Index(name = "idx_missionanswermodel_userid_missionid", columnList = "user_model_user_id, missionId")
+        @Index(name = "idx_missionanswermodel_userid_missionid", columnList = "user_model_user_id, missionId"),
+        @Index(name = "idx_missionanswermodel", columnList = "answerReviewStatus")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uc_missionanswermodel_missionid_userid", columnNames = {"missionId", "user_model_user_id"})
 })

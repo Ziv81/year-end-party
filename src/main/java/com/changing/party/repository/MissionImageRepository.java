@@ -1,7 +1,6 @@
 package com.changing.party.repository;
 
-import com.changing.party.common.AnswerReviewStatus;
-import com.changing.party.model.MissionAnswerModel;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.model.MissionImageModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -151,6 +151,7 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(ImageIdNotFoundException.class)
     public Object imageIdNotFoundExceptionHandler(ImageIdNotFoundException exception) {
+        log.error("Image id not exist.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
@@ -160,6 +161,7 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(ImageStatusNotReview.class)
     public Object imageStatusNotReviewExceptionHandler(ImageStatusNotReview exception) {
+        log.error("Image status not review.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
@@ -169,10 +171,52 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(MissionAnswerImageListSizeNotAcceptException.class)
     public Object missionAnswerImageListSizeNotAcceptExceptionHandler(MissionAnswerImageListSizeNotAcceptException exception) {
+        log.error("Mission answer image list size not accept.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
                         .errorMessage("Mission answer image list size not accept.")
+                        .build());
+    }
+
+    @ExceptionHandler(AlreadyOneStackISOpenException.class)
+    public Object alreadyOneStackISOpenExceptionHandler(AlreadyOneStackISOpenException exception) {
+        log.error("Other one stake in process.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Other one stake in process.")
+                        .build());
+    }
+
+    @ExceptionHandler(StakeIdNotFoundException.class)
+    public Object stakeIdNotFoundExceptionHandler(StakeIdNotFoundException exception) {
+        String errorMessage = String.format("Stake id %s not found", exception.getMessage());
+        log.error(errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage(errorMessage)
+                        .build());
+    }
+
+    @ExceptionHandler(StakeIsNotOpenException.class)
+    public Object stakeIsNotOpenExceptionHandler(StakeIsNotOpenException exception) {
+        log.error("Stake status is not open {}" + exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Stake status is not open")
+                        .build());
+    }
+
+    @ExceptionHandler(UnknownUpdateStakeStatusOPException.class)
+    public Object UnknownUpdateStakeStatusOPExceptionHandler(UnknownUpdateStakeStatusOPException exception) {
+        log.error("Unknown update stake status op {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Unknown update stake status op")
                         .build());
     }
 
