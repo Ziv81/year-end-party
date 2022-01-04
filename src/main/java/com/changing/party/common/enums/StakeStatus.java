@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum StakeStatus {
-    OPEN(1), CLOSE(2);
+    OPEN(1), CLOSE(2), FINISH(3);
     @Getter
     private final int status;
 

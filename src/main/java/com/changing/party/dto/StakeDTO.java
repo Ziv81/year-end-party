@@ -20,16 +20,17 @@ public class StakeDTO {
     private StakeStatus status;
     private String title;
     private List<StakePlayerDTO> stakePlayer;
+    private Integer winnerId;
 
     public static StakeDTO getStakeDTO(Stake stake) {
         List<StakePlayerDTO> stakePlayerDTOS = new ArrayList<>();
-        stake.getStakePlayers().forEach(x -> StakePlayerDTO.getStakePlayerDTO(x));
-        return new StakeDTO(stake.getId(), stake.getStatus(), stake.getTitle(), stakePlayerDTOS);
+        stake.getStakePlayers().forEach(x -> stakePlayerDTOS.add(StakePlayerDTO.getStakePlayerDTO(x)));
+        return new StakeDTO(stake.getId(), stake.getStatus(), stake.getTitle(), stakePlayerDTOS, stake.getWinnerId());
     }
 
     public static StakeDTO getStakeDTO(CreateStakeRequest stakeRequest) {
         List<StakePlayerDTO> stakePlayerDTOS = new ArrayList<>();
-        stakeRequest.getPlayer().forEach(x -> StakePlayerDTO.getStakePlayerDTO(x));
+        stakeRequest.getPlayer().forEach(x -> stakePlayerDTOS.add(StakePlayerDTO.getStakePlayerDTO(x)));
         return StakeDTO.builder()
                 .title(stakeRequest.getTitle())
                 .stakePlayer(stakePlayerDTOS)

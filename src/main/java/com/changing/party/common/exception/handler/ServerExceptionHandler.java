@@ -191,7 +191,7 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(StakeIdNotFoundException.class)
     public Object stakeIdNotFoundExceptionHandler(StakeIdNotFoundException exception) {
-        String errorMessage = String.format("Stake id %s not found", exception.getMessage());
+        String errorMessage = String.format("Stake id %s not found.", exception.getMessage());
         log.error(errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
@@ -202,11 +202,21 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(StakeIsNotOpenException.class)
     public Object stakeIsNotOpenExceptionHandler(StakeIsNotOpenException exception) {
-        log.error("Stake status is not open {}" + exception.getMessage());
+        log.error("Stake status is not open {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
-                        .errorMessage("Stake status is not open")
+                        .errorMessage("Stake status is not open.")
+                        .build());
+    }
+
+    @ExceptionHandler(StakeIsNotCloseException.class)
+    public Object stakeIsNotCloseExceptionHandler(StakeIsNotCloseException exception) {
+        log.error("Stake status is not close {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Stake status is not close.")
                         .build());
     }
 
@@ -216,9 +226,46 @@ public class ServerExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
-                        .errorMessage("Unknown update stake status op")
+                        .errorMessage("Unknown update stake status op.")
                         .build());
     }
+
+    @ExceptionHandler(StakeWinnerPlayIdNotFoundException.class)
+    public Object stakeWinnerPlayIdNotFoundExceptionHandler(StakeWinnerPlayIdNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Stake winner play id not found.")
+                        .build());
+    }
+
+    @ExceptionHandler(UserPointNotEnoughException.class)
+    public Object userPointNotEnoughExceptionHandler(UserPointNotEnoughException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("User point not enough.")
+                        .build());
+    }
+
+    @ExceptionHandler(UserAlreadyPlaceBetsException.class)
+    public Object userAlreadyPlaceBetsExceptionHandler(UserAlreadyPlaceBetsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("User already place bets.")
+                        .build());
+    }
+
+    @ExceptionHandler(StakePlayerIdNotFoundException.class)
+    public Object stakePlayerIdNotFoundExceptionHandler(StakePlayerIdNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Stake player id not found.")
+                        .build());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public Object unCaughtException(Exception exception) {

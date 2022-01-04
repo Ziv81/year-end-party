@@ -1,8 +1,6 @@
 package com.changing.party.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,9 +10,11 @@ import java.util.Date;
         @Index(name = "idx_stakedetail", columnList = "user_model_user_id"),
         @Index(name = "idx_stakedetail_user_id_stake_id", columnList = "user_model_user_id, stake_id")
 })
+@Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
-@RequiredArgsConstructor
 public class StakeDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

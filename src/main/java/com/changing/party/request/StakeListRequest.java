@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -13,9 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CreateStakeRequest {
-    @NotBlank
-    String title;
-    @Size(min = 2)
-    List<StakePlayerRequest> player;
+@Valid
+public class StakeListRequest {
+    @Size(min = 1)
+    List<StakeRequest> stakes;
 }

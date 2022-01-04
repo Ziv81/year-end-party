@@ -108,6 +108,9 @@ public class UserService implements UserDetailsService {
     public UserModel getUserModelFromSecurityContext() {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (usernamePasswordAuthenticationToken == null) {
+            return null;
+        }
         return userRepository.findByEnglishNameIgnoreCase(usernamePasswordAuthenticationToken.getName())
                 .orElseThrow(() -> new UsernameNotFoundException(usernamePasswordAuthenticationToken.getName()));
     }

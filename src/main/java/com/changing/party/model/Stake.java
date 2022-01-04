@@ -30,4 +30,7 @@ public class Stake {
 
     @OneToMany(mappedBy = "stake", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<StakePlayer> stakePlayers = new ArrayList<>();
+
+    @Column(name = "winner_id")
+    private Integer winnerId;
 }

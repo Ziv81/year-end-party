@@ -5,9 +5,7 @@ import lombok.Getter;
 import javax.validation.constraints.Min;
 
 @Getter
-public class UpdateStakeStatusRequest {
+public class FinishStakeRequest {
     @Min(1)
-    int data;
-
-    String op;
+    int winner;
 }
