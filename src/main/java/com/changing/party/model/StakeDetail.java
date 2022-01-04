@@ -39,4 +39,7 @@ public class StakeDetail {
     @Temporal(TemporalType.DATE)
     @Column(name = "stake_time")
     private Date stakeTime;
+
+    @Column(name = "winPoint")
+    private Integer winPoint;
 }

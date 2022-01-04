@@ -5,6 +5,7 @@ import com.changing.party.common.exception.*;
 import com.changing.party.dto.StakeDTO;
 import com.changing.party.dto.UserStakeDTO;
 import com.changing.party.dto.UserStakePlayerDTO;
+import com.changing.party.dto.UserStakeRoundDTO;
 import com.changing.party.model.Stake;
 import com.changing.party.model.StakeDetail;
 import com.changing.party.model.StakePlayer;
@@ -18,10 +19,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -167,6 +166,7 @@ public class StakeService {
      * @return
      */
     public UserStakeDTO getStake() throws StakeIdNotFoundException {
+        UserModel user = userService.getUserModelFromSecurityContext();
         Set<StakeDetail> stakeDetails = stakeDetailRepository.findByUserModel_UserIdAndStake_Id(user.getUserId(), memoryLastStakeId);
         // 不開放下注且資料庫沒有使用者上一輪資訊
         if (memoryStakeStatus != MemoryStakeStatus.OPEN && stakeDetails.isEmpty()) {
@@ -178,23 +178,45 @@ public class StakeService {
     /**
      * 查詢使用者下注歷程資訊
      */
-    public List<UserStakeDTO> getUserStakeHistory() {
+    public List<UserStakeRoundDTO> getUserStakeHistory() throws StakeIdNotFoundException {
+        UserModel user = userService.getUserModelFromSecurityContext();
         Set<StakeDetail> stakeDetailList = stakeDetailRepository.findByUserModel_UserId(user.getUserId());
-        return null;
+        Map<Object, List<StakeDetail>> stakeDetailHashMap =
+                stakeDetailList.stream().collect(Collectors.groupingBy(x -> x.getStake().getId()));
+        List<UserStakeRoundDTO> userStakeRoundDTOs = new ArrayList<>();
+        Iterator<Object> keySetIterator = stakeDetailHashMap.keySet().iterator();
+        while (keySetIterator.hasNext()) {
+            Integer stakeIdKey = (Integer) keySetIterator.next();
+            userStakeRoundDTOs.add(getUserStakeRoundByStakeId(stakeIdKey, stakeDetailHashMap.get(stakeIdKey).stream().collect(Collectors.toSet())));
+        }
+        return userStakeRoundDTOs;
     }
 
-
     /**
-     * 查詢使用者特定賭局下注資訊，若該局沒有下注資訊回傳 Optional.empty()
+     * 查詢使用者特定賭局下注資訊
      *
      * @param stakeId
      * @return
      * @throws StakeIdNotFoundException
      */
-    private UserStakeDTO getUserStakeByStakeId(int stakeId) throws StakeIdNotFoundException {
-        Set<StakeDetail> stakeDetails =
-                stakeDetailRepository.findByUserModel_UserIdAndStake_Id(user.getUserId(), memoryLastStakeId);
-        return getUserStakeByStakeId(stakeId, stakeDetails);
+    private UserStakeRoundDTO getUserStakeRoundByStakeId(int stakeId, Set<StakeDetail> stakeDetails) throws StakeIdNotFoundException {
+        Stake lastStake = stakeRepository.findById(stakeId).orElseThrow(() -> new StakeIdNotFoundException(stakeId));
+        List<UserStakePlayerDTO> userStakePlayerDTOs = getUserStakePlayerDTOList(lastStake.getStakePlayers());
+        addUserStakePoint(userStakePlayerDTOs, stakeDetails);
+        Date createTime = null;
+        Optional<StakeDetail> stakeDetail=stakeDetails.stream().findFirst()
+        if (stakeDetails.stream().findFirst().get().getStakeTime() != null) {
+            createTime = stakeDetails.stream().findFirst().get().getStakeTime();
+        }
+        return UserStakeRoundDTO.builder()
+                .stackId(lastStake.getId())
+                .status(lastStake.getStatus())
+                .title(lastStake.getTitle())
+                .player(userStakePlayerDTOs)
+                .winner(lastStake.getWinnerId())
+                .winPoint(stakeDetails.stream().mapToInt(x -> x.getWinPoint()).sum())
+                .createTime(createTime)
+                .build();
     }
 
     /**
@@ -218,13 +240,11 @@ public class StakeService {
 
     private void addUserStakePoint(List<UserStakePlayerDTO> userStakePlayerDTOs, Set<StakeDetail> stakeDetails) {
         // 加入下注資訊
-        if (!stakeDetails.isEmpty()) {
-            stakeDetails.forEach(x ->
-                    userStakePlayerDTOs.stream().filter(userStakePlayerDTO ->
-                                    userStakePlayerDTO.getPlayerId().equals(x.getStakePlayer().getPlayerId()))
-                            .findFirst().ifPresent(existUserStakePlayerDTO -> existUserStakePlayerDTO.setPoint(x.getStakePoint()))
-            );
-        }
+        stakeDetails.forEach(x ->
+                userStakePlayerDTOs.stream().filter(userStakePlayerDTO ->
+                                userStakePlayerDTO.getPlayerId().equals(x.getStakePlayer().getPlayerId()))
+                        .findFirst().ifPresent(existUserStakePlayerDTO -> existUserStakePlayerDTO.setPoint(x.getStakePoint()))
+        );
     }
 
     /**
@@ -269,6 +289,7 @@ public class StakeService {
                     .stakePlayer(stakePlayer)
                     .stakePoint(userStakePlayerDTO.getPoint())
                     .stakeTime(new Date())
+                    .winPoint(0)
                     .build());
         }
 
