@@ -12,8 +12,8 @@ import com.changing.party.repository.BinaryAnswerRepository;
 import com.changing.party.repository.BinaryAnswerStatisticsRepository;
 import com.changing.party.request.AnswerBinaryRequest;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Builder
-@AllArgsConstructor
 @Transactional
+@Log4j2
 public class BinaryService {
 
 
@@ -51,7 +50,7 @@ public class BinaryService {
      * 贏得二位元少數決時，單題給予的獎勵
      */
     @Value("${year-end-party.binary.winner.score}")
-    private static int binaryWinnerScore;
+    private int binaryWinnerScore;
 
     private static BinaryAnswerStatus binaryAnswerStatus = BinaryAnswerStatus.OPEN;
 
@@ -60,6 +59,12 @@ public class BinaryService {
     BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
     UserService userService;
 
+    public BinaryService(BinaryAnswerRepository binaryAnswerRepository, BinaryAnswerDetailRepository binaryAnswerDetailRepository, BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository, UserService userService) {
+        this.binaryAnswerRepository = binaryAnswerRepository;
+        this.binaryAnswerDetailRepository = binaryAnswerDetailRepository;
+        this.binaryAnswerStatisticsRepository = binaryAnswerStatisticsRepository;
+        this.userService = userService;
+    }
 
     /**
      * 回傳使用者答題狀況
@@ -119,7 +124,7 @@ public class BinaryService {
     }
 
     /**
-     * 根據結算完的結果，經使用者的分數進行更新
+     * 根據結算完的結果，將使用者的分數進行更新
      */
     public void updateUserScoreByBinarySquareUp() {
         binaryAnswerRepository.findAll().forEach(

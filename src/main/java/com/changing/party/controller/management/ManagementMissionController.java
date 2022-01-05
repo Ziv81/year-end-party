@@ -67,18 +67,23 @@ public class ManagementMissionController {
     }
 
     @PostMapping(value = "/mission/verify")
-    public Response verifyMissionImage(@Valid @RequestBody MissionImageVerifyListRequest missionImageVerifyListRequest) {
+    public ResponseEntity<Response> verifyMissionImage(@Valid @RequestBody MissionImageVerifyListRequest missionImageVerifyListRequest) {
         List<MissionImageVerifyResponse> missionImageVerifyResponses = missionService.verifyMissionImages(missionImageVerifyListRequest);
         int errorCode =
                 missionImageVerifyResponses.stream().anyMatch(x -> !x.getErrorCode().equals(ServerConstant.SERVER_SUCCESS_CODE)) ?
                         ServerConstant.SERVER_FAIL_CODE : ServerConstant.SERVER_SUCCESS_CODE;
-        return Response.builder()
-                .errorCode(errorCode)
-                .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(MissionImageVerifyListResponse.builder()
-                        .result(missionImageVerifyResponses)
-                        .build())
-                .build();
+        int status = 200;
+        if (errorCode != ServerConstant.SERVER_SUCCESS_CODE) {
+            status = 400;
+        }
+        return ResponseEntity.status(status)
+                .body(Response.builder()
+                        .errorCode(errorCode)
+                        .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
+                        .data(MissionImageVerifyListResponse.builder()
+                                .result(missionImageVerifyResponses)
+                                .build())
+                        .build());
     }
 
     @PostMapping(value = "/mission/clearAll")

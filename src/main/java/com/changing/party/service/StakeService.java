@@ -155,9 +155,31 @@ public class StakeService {
 
         stake.setWinnerId(winnerId);
         stake.setStatus(StakeStatus.FINISH);
-        //TODO 結算邏輯
         stakeRepository.save(stake);
+        calcBetsResult(stake, winnerId);
         StakeService.setMemoryStakeStatus(MemoryStakeStatus.NONE);
+    }
+
+    /**
+     * 計算最後一輪下注的結果
+     */
+    private void calcBetsResult(Stake stake, int winnerId) {
+        int totalLosePoint = stakeDetailRepository
+                .findByStake_IdAndStakePlayer_PlayerIdIsNot(stake.getId(), winnerId)
+                .stream()
+                .mapToInt(x -> x.getStakePoint())
+                .sum();
+
+        Set<StakeDetail> winnerList = stakeDetailRepository.findByStake_IdAndStakePlayer_PlayerId(stake.getId(), winnerId);
+        int totalWinPoint = winnerList.stream().mapToInt(x -> x.getStakePoint()).sum();
+
+        for (StakeDetail stakeDetail : winnerList) {
+            double winPointPercentage = stakeDetail.getStakePoint() / totalWinPoint;
+            int winPoint = (int) Math.ceil(totalLosePoint * winPointPercentage);
+            stakeDetail.setWinPoint(winPoint);
+            stakeDetailRepository.save(stakeDetail);
+            userService.updateUserPoint(winPoint);
+        }
     }
 
     /**
@@ -238,6 +260,12 @@ public class StakeService {
                 .build();
     }
 
+    /**
+     * 加入使用者下注資訊
+     *
+     * @param userStakePlayerDTOs
+     * @param stakeDetails
+     */
     private void addUserStakePoint(List<UserStakePlayerDTO> userStakePlayerDTOs, Set<StakeDetail> stakeDetails) {
         // 加入下注資訊
         stakeDetails.forEach(x ->
@@ -271,7 +299,8 @@ public class StakeService {
 
         List<StakePlayer> stakePlayers = stakePlayerRepository.findByStake_Id(stakeId);
         //確認總下注籌碼少於或等於使用者擁有的點數
-        if (userStakeDTOList.stream().mapToInt(x -> x.getPoint()).sum() > user.getUserPoint()) {
+        int totalBetsPoint = userStakeDTOList.stream().mapToInt(x -> x.getPoint()).sum();
+        if (totalBetsPoint > user.getUserPoint()) {
             throw new UserPointNotEnoughException();
         }
 
@@ -294,6 +323,7 @@ public class StakeService {
         }
 
         saveStakeDetails.forEach(x -> stakeDetailRepository.save(x));
+        userService.updateUserPoint(-totalBetsPoint);
     }
 
     /**

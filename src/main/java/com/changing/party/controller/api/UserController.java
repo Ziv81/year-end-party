@@ -41,7 +41,7 @@ public class UserController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(userService.getUserLeaderBoard(10))
+                .data(userService.getUserLeaderBoard())
                 .build();
     }
 

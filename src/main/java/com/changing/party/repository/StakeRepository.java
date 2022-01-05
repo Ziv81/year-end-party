@@ -13,4 +13,6 @@ public interface StakeRepository extends JpaRepository<Stake, Integer> {
     Optional<Stake> findById(Integer integer);
 
     Optional<Stake> findByStatus(StakeStatus status);
+
+
 }

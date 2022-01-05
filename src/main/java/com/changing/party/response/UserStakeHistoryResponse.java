@@ -2,16 +2,17 @@ package com.changing.party.response;
 
 import com.changing.party.dto.UserStakeRoundDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
-@Log4j2
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserStakeHistoryResponse {
     Integer stakeId;
@@ -29,7 +30,7 @@ public class UserStakeHistoryResponse {
                 .title(userStakeRoundDTO.getTitle())
                 .createTime(userStakeRoundDTO.getCreateTime().getTime())
                 .winner(userStakeRoundDTO.getWinner())
-                .winner(userStakeRoundDTO.getWinPoint())
+                .winPoint(userStakeRoundDTO.getWinPoint())
                 .player(userStakePlayerResponses)
                 .build();
     }

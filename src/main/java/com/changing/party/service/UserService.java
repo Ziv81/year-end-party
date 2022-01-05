@@ -43,8 +43,8 @@ public class UserService implements UserDetailsService {
         return UserResponse.getUserModel(userModel, getUserRank(userModel.getUserPoint()));
     }
 
-    public UserLeaderBoardDTO getUserLeaderBoard(int size) {
-        return UserLeaderBoardDTO.getUserLeaderBoardModel(userRepository.findAllByOrderByUserPoint(Pageable.ofSize(size * 2)), size);
+    public UserLeaderBoardDTO getUserLeaderBoard() {
+        return UserLeaderBoardDTO.getUserLeaderBoardModel(userRepository.findByOrderByUserPointDescEnglishNameAsc());
     }
 
     public void createUsers(List<UploadUserRequest> users,

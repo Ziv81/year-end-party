@@ -72,7 +72,8 @@ public class StakeController {
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
                 .data(UserStakeHistoryListResponse.builder()
-                        .result(userStakeHistoryResponses))
+                        .result(userStakeHistoryResponses)
+                        .build())
                 .build();
     }
 }

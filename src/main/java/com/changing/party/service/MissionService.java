@@ -1,8 +1,8 @@
 package com.changing.party.service;
 
-import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.ServerConstant;
+import com.changing.party.common.enums.AnswerReviewStatus;
 import com.changing.party.common.exception.*;
 import com.changing.party.dto.MissionAnswerDTO;
 import com.changing.party.dto.MissionQuestionConfigDTO;
@@ -115,8 +115,8 @@ public class MissionService {
                         }
                         missionImageVerifyResponses.add(
                                 MissionImageVerifyResponse.builder()
-                                        .missionId(x.getMissionId())
-                                        .userId(x.getUserId())
+                                        .targetId(x.getMissionId())
+                                        .targetName(x.getUserId())
                                         .errorCode(errorCode)
                                         .errorMessage(errorMessage)
                                         .build());
@@ -267,15 +267,16 @@ public class MissionService {
      */
     private boolean answerMission(UserModel user, MissionQuestionConfigDTO missionQuestionConfigDTO, String answer) {
         boolean answerCorrect = missionQuestionConfigDTO.getMissionAnswer().contains(answer);
+        int score = answerCorrect ? missionQuestionConfigDTO.getMissionReward() : 0;
         missionAnswerRepository.save(MissionAnswerModel.builder()
                 .userModel(user)
                 .missionId(missionQuestionConfigDTO.getMissionId())
                 .answerReviewStatus(answerCorrect ? AnswerReviewStatus.SUCCESS : AnswerReviewStatus.FAIL)
-                .score(answerCorrect ? missionQuestionConfigDTO.getMissionReward() : 0)
+                .score(score)
                 .answerContent(answer)
                 .answerDate(new Date())
                 .build());
-        userService.updateUserPoint(missionQuestionConfigDTO.getMissionReward());
+        userService.updateUserPoint(score);
         return answerCorrect;
     }
 

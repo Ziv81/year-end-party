@@ -10,8 +10,8 @@ import lombok.*;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MissionImageVerifyResponse {
-    Integer missionId;
-    Integer userId;
+    Integer targetId;
+    Integer targetName;
     Integer errorCode;
     String errorMessage;
 }
