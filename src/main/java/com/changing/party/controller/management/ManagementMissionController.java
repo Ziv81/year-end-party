@@ -82,6 +82,7 @@ public class ManagementMissionController {
                         .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
                         .data(MissionImageVerifyListResponse.builder()
                                 .result(missionImageVerifyResponses)
+                                .amount(missionImageVerifyResponses.size())
                                 .build())
                         .build());
     }

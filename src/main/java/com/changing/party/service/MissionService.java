@@ -154,7 +154,7 @@ public class MissionService {
         missionAnswerRepository.findByAnswerReviewStatus(AnswerReviewStatus.REVIEW)
                 .forEach(x -> {
                     try {
-                        missionImageModelDTOs.add(new MissionAnswerDTO().getMissionAnswerModelDTO(x));
+                        missionImageModelDTOs.add(new MissionAnswerDTO().getMissionAnswerModelDTO(x, false));
                     } catch (ImageIdNotFoundException e) {
                         log.error("getPendingMissionImage image id not found.", e);
                     } catch (IOException e) {
@@ -182,7 +182,7 @@ public class MissionService {
             if (missionAnswerModel.isPresent()) {
                 //使用者已經完成作答
                 missionAnswerModelDTOs.add(
-                        new MissionAnswerDTO().getMissionAnswerModelDTO(missionAnswerModel.get()));
+                        new MissionAnswerDTO(missionImageRepository).getMissionAnswerModelDTO(missionAnswerModel.get(), true));
             } else {
                 //使用者未完成作答
                 missionAnswerModelDTOs.add(

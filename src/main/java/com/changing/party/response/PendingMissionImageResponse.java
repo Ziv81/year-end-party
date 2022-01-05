@@ -25,10 +25,9 @@ public class PendingMissionImageResponse {
                 .build();
     }
 
-    private static List<String> getImageUrlByAnswerContent(List<String> base64AnswerContent) {
-        String decode = new String(Base64.getDecoder().decode(base64AnswerContent), StandardCharsets.UTF_8);
+    private static List<String> getImageUrlByAnswerContent(List<String> imageIds) {
         List<String> results = new ArrayList<>();
-        Arrays.stream(decode.split(",")).forEach(x -> results.add(String.format("/management/mission/image/%s", x)));
+        imageIds.forEach(x -> results.add(String.format("/management/mission/image/%s", x)));
         return results;
     }
 }

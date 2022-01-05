@@ -9,6 +9,7 @@ import com.changing.party.model.UserModel;
 import com.changing.party.repository.MissionImageRepository;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,10 +22,8 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Configurable
 public class MissionAnswerDTO implements Serializable {
-
-    @Autowired
-    MissionImageRepository missionImageRepository;
 
     private UserModel userModel;
     private Integer missionId;
@@ -32,6 +31,12 @@ public class MissionAnswerDTO implements Serializable {
     private List<String> answerContent;
     private Integer score;
     private Date answerDate;
+
+    MissionImageRepository missionImageRepository;
+
+    public MissionAnswerDTO(MissionImageRepository missionImageRepository) {
+        this.missionImageRepository = missionImageRepository;
+    }
 
     public enum AnswerReviewDTOStatus {
         NOT_ANSWER(0), SUCCESS(1), FAIL(2), REVIEW(3);
@@ -56,18 +61,19 @@ public class MissionAnswerDTO implements Serializable {
         }
     }
 
-    public MissionAnswerDTO getMissionAnswerModelDTO(MissionAnswerModel missionAnswerModel) throws ImageIdNotFoundException, IOException {
+    public MissionAnswerDTO getMissionAnswerModelDTO(MissionAnswerModel missionAnswerModel, boolean autoLoadImage) throws ImageIdNotFoundException, IOException {
         return MissionAnswerDTO.builder()
                 .userModel(missionAnswerModel.getUserModel())
                 .missionId(missionAnswerModel.getMissionId())
                 .answerReviewStatus(AnswerReviewDTOStatus.convert(missionAnswerModel.getAnswerReviewStatus()))
-                .answerContent(getAnswerContent(missionAnswerModel))
+                .answerContent(getAnswerContent(missionAnswerModel, autoLoadImage))
                 .score(missionAnswerModel.getScore())
                 .answerDate(missionAnswerModel.getAnswerDate())
                 .build();
     }
 
-    private List<String> getAnswerContent(MissionAnswerModel missionAnswerModel) throws ImageIdNotFoundException, IOException {
+
+    private List<String> getAnswerContent(MissionAnswerModel missionAnswerModel, boolean autoLoadImage) throws ImageIdNotFoundException, IOException {
         MissionQuestionConfigDTO.MissionType missionType =
                 GlobalVariable.getGlobalVariableService().getMISSION_ID_TYPE_MAP().get(missionAnswerModel.getMissionId());
         if (missionType == MissionQuestionConfigDTO.MissionType.TEXT ||
@@ -79,6 +85,8 @@ public class MissionAnswerDTO implements Serializable {
                             .decode(missionAnswerModel.getAnswerContent()),
                             StandardCharsets.UTF_8)
                             .split(",");
+            if (!autoLoadImage)
+                return Arrays.asList(imageIds);
             List<String> base64ImageContentList = new ArrayList<>();
             for (String imageIdString : imageIds) {
                 int imageId = Integer.parseInt(imageIdString);
