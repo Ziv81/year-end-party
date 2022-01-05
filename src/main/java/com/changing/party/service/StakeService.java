@@ -204,9 +204,9 @@ public class StakeService {
         List<UserStakePlayerDTO> userStakePlayerDTOs = getUserStakePlayerDTOList(lastStake.getStakePlayers());
         addUserStakePoint(userStakePlayerDTOs, stakeDetails);
         Date createTime = null;
-        Optional<StakeDetail> stakeDetail=stakeDetails.stream().findFirst()
-        if (stakeDetails.stream().findFirst().get().getStakeTime() != null) {
-            createTime = stakeDetails.stream().findFirst().get().getStakeTime();
+        Optional<StakeDetail> stakeDetail = stakeDetails.stream().findFirst();
+        if (stakeDetail.isPresent()) {
+            createTime = stakeDetail.get().getStakeTime();
         }
         return UserStakeRoundDTO.builder()
                 .stackId(lastStake.getId())

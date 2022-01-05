@@ -5,6 +5,8 @@ import com.changing.party.model.OnlyPointModel;
 import com.changing.party.model.UserModel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +23,8 @@ public interface UserRepository extends JpaRepository<UserModel, Integer> {
     Optional<UserModel> findByEnglishNameIgnoreCase(String englishName);
 
     List<OnlyPointModel> findAllByOrderByUserPointDesc();
+
+    @Modifying
+    @Query("update UserModel set userPoint = 0")
+    Integer resetUserPoint();
 }

@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 @Log4j2
 @AllArgsConstructor
+@Transactional
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -124,5 +126,9 @@ public class UserService implements UserDetailsService {
         UserModel user = getUserModelFromSecurityContext();
         user.setUserPoint(user.getUserPoint() + userPoint);
         userRepository.save(user);
+    }
+
+    public void resetUserPoint() {
+        userRepository.resetUserPoint();
     }
 }
