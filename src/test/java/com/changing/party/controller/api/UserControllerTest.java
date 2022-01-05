@@ -125,7 +125,7 @@ class UserControllerTest {
      */
     @Test
     void should_return_user_list_when_get_leader_board() throws Exception {
-        when(userService.getUserLeaderBoard(Mockito.anyInt()))
+        when(userService.getUserLeaderBoard())
                 .thenReturn(UserLeaderBoardDTO.builder().result(defaultUserList).build());
         this.mockMvc.perform(get("/rest/api/user/leaderBoard")
                         .headers(authorizationHeader))

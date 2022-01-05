@@ -3,7 +3,6 @@ package com.changing.party.response;
 import com.changing.party.dto.UserStakeDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserStakeResponse {
     Integer status;
-    Integer stackId;
+    Integer stakeId;
     String title;
     List<UserStakePlayerResponse> player;
 
@@ -27,7 +26,7 @@ public class UserStakeResponse {
         userStakeDTO.getPlayer().forEach(x -> player.add(UserStakePlayerResponse.getUserStakePlayerResponse(x)));
         return UserStakeResponse.builder()
                 .status(userStakeDTO.getStatus().getStatus())
-                .stackId(userStakeDTO.getStackId())
+                .stakeId(userStakeDTO.getStakeId())
                 .title(userStakeDTO.getTitle())
                 .player(player)
                 .build();

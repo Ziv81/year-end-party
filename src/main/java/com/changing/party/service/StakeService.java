@@ -78,13 +78,13 @@ public class StakeService {
      *
      * @param stakeDTO
      */
-    public void createStake(StakeDTO stakeDTO) throws AlreadyOneStackISOpenException {
+    public void createStake(StakeDTO stakeDTO) throws AlreadyOneStakeISOpenException {
         if (!StakeService.getMemoryStakeStatus().equals(MemoryStakeStatus.NONE)) {
-            throw new AlreadyOneStackISOpenException();
+            throw new AlreadyOneStakeISOpenException();
         }
 
         if (stakeRepository.existsByStatus(StakeStatus.OPEN)) {
-            throw new AlreadyOneStackISOpenException();
+            throw new AlreadyOneStakeISOpenException();
         }
         Stake stake = stakeRepository.save(Stake.builder()
                 .status(StakeStatus.OPEN)
@@ -231,7 +231,7 @@ public class StakeService {
             createTime = stakeDetail.get().getStakeTime();
         }
         return UserStakeRoundDTO.builder()
-                .stackId(lastStake.getId())
+                .stakeId(lastStake.getId())
                 .status(lastStake.getStatus())
                 .title(lastStake.getTitle())
                 .player(userStakePlayerDTOs)
@@ -253,7 +253,7 @@ public class StakeService {
         List<UserStakePlayerDTO> userStakePlayerDTOs = getUserStakePlayerDTOList(lastStake.getStakePlayers());
         addUserStakePoint(userStakePlayerDTOs, stakeDetails);
         return UserStakeDTO.builder()
-                .stackId(lastStake.getId())
+                .stakeId(lastStake.getId())
                 .status(lastStake.getStatus())
                 .title(lastStake.getTitle())
                 .player(userStakePlayerDTOs)

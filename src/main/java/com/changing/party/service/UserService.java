@@ -5,6 +5,7 @@ import com.changing.party.common.exception.GetUserRankException;
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.dto.UserLeaderBoardDTO;
 import com.changing.party.model.LoginUser;
+import com.changing.party.model.OnlyNameModel;
 import com.changing.party.model.OnlyPointModel;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.UserRepository;
@@ -12,7 +13,6 @@ import com.changing.party.request.UploadUserRequest;
 import com.changing.party.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -130,5 +127,17 @@ public class UserService implements UserDetailsService {
 
     public void resetUserPoint() {
         userRepository.resetUserPoint();
+    }
+
+    /**
+     * 查詢使用者名字清單
+     *
+     * @return
+     */
+    public List<String> getUserNameList() {
+        List<OnlyNameModel> userNameList = userRepository.findByOrderByEnglishNameAsc();
+        List<String> result = new ArrayList<>();
+        userNameList.forEach(x -> result.add(x.getEnglishName()));
+        return result;
     }
 }

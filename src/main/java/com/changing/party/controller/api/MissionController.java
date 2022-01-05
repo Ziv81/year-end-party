@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,29 +35,16 @@ public class MissionController {
     }
 
     @GetMapping
-    public Response getMissionAnswerHistory() {
+    public Response getMissionAnswerHistory() throws ImageIdNotFoundException, IOException {
         List<MissionAnswerDTO> responseList = missionService.getMissionAnswerHistory();
         List<MissionAnswerResponse> missionAnswerResponses = new ArrayList<>();
-        responseList.forEach(x -> {
-            switch (GlobalVariable.getGlobalVariableService().getMISSION_ID_TYPE_MAP().get(x.getMissionId())) {
-                case IMAGE:
-                    missionAnswerResponses.add(MissionAnswerResponse.getImageMissionAnswer(
-                            x,
-                            GlobalVariable
-                                    .getGlobalVariableService()
-                                    .getMISSION_ID_REWARD_MAP()
-                                    .get(x.getMissionId())));
-                    break;
-                case CHOOSE:
-                case TEXT:
-                    missionAnswerResponses.add(MissionAnswerResponse.getDefaultMissionAnswer(
-                            x,
-                            GlobalVariable
-                                    .getGlobalVariableService()
-                                    .getMISSION_ID_REWARD_MAP()
-                                    .get(x.getMissionId())));
-            }
-        });
+        responseList.forEach(x -> missionAnswerResponses.add(MissionAnswerResponse.getMissionAnswerResponse(
+                x,
+                GlobalVariable
+                        .getGlobalVariableService()
+                        .getMISSION_ID_REWARD_MAP()
+                        .get(x.getMissionId())))
+        );
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)

@@ -43,7 +43,7 @@ public class ManagementStakeController {
     }
 
     @PostMapping(value = "/stake")
-    public Response createStake(@Valid @RequestBody CreateStakeRequest createStakeRequest) throws AlreadyOneStackISOpenException {
+    public Response createStake(@Valid @RequestBody CreateStakeRequest createStakeRequest) throws AlreadyOneStakeISOpenException {
         stakeService.createStake(StakeDTO.getStakeDTO(createStakeRequest));
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)

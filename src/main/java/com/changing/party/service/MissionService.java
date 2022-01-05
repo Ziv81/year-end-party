@@ -152,7 +152,15 @@ public class MissionService {
     public List<MissionAnswerDTO> getPendingMissionImage() {
         List<MissionAnswerDTO> missionImageModelDTOs = new ArrayList<>();
         missionAnswerRepository.findByAnswerReviewStatus(AnswerReviewStatus.REVIEW)
-                .forEach(x -> missionImageModelDTOs.add(MissionAnswerDTO.getMissionAnswerModelDTO(x)));
+                .forEach(x -> {
+                    try {
+                        missionImageModelDTOs.add(new MissionAnswerDTO().getMissionAnswerModelDTO(x));
+                    } catch (ImageIdNotFoundException e) {
+                        log.error("getPendingMissionImage image id not found.", e);
+                    } catch (IOException e) {
+                        log.error("getPendingMissionImage occur IOException.", e);
+                    }
+                });
         return missionImageModelDTOs;
     }
 
@@ -161,7 +169,7 @@ public class MissionService {
      *
      * @return
      */
-    public List<MissionAnswerDTO> getMissionAnswerHistory() {
+    public List<MissionAnswerDTO> getMissionAnswerHistory() throws ImageIdNotFoundException, IOException {
         Set<MissionAnswerModel> missionAnswerModelStream = missionAnswerRepository
                 .findByUserModel_UserIdOrderByMissionIdAsc(userService.getUserModelFromSecurityContext().getUserId());
         List<MissionAnswerDTO> missionAnswerModelDTOs = new ArrayList<>();
@@ -174,7 +182,7 @@ public class MissionService {
             if (missionAnswerModel.isPresent()) {
                 //使用者已經完成作答
                 missionAnswerModelDTOs.add(
-                        MissionAnswerDTO.getMissionAnswerModelDTO(missionAnswerModel.get()));
+                        new MissionAnswerDTO().getMissionAnswerModelDTO(missionAnswerModel.get()));
             } else {
                 //使用者未完成作答
                 missionAnswerModelDTOs.add(

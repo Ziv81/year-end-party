@@ -179,8 +179,8 @@ public class ServerExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler(AlreadyOneStackISOpenException.class)
-    public Object alreadyOneStackISOpenExceptionHandler(AlreadyOneStackISOpenException exception) {
+    @ExceptionHandler(AlreadyOneStakeISOpenException.class)
+    public Object AlreadyOneStakeISOpenExceptionHandler(AlreadyOneStakeISOpenException exception) {
         log.error("Other one stake in process.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Response.builder()

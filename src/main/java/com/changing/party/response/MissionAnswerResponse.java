@@ -5,6 +5,9 @@ import com.changing.party.dto.MissionAnswerDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 @Getter
 @Builder
@@ -16,7 +19,7 @@ public class MissionAnswerResponse {
     private Integer missionId;
     private Integer missionStatus;
     private Integer missionReward;
-    private String answer;
+    private List<String> answer;
     private Integer score;
 
     /**
@@ -26,32 +29,15 @@ public class MissionAnswerResponse {
      * @param missionReward
      * @return
      */
-    public static MissionAnswerResponse getImageMissionAnswer(MissionAnswerDTO dto, Integer missionReward) {
+    public static MissionAnswerResponse getMissionAnswerResponse(MissionAnswerDTO dto, Integer missionReward) {
         return MissionAnswerResponse.builder()
                 .missionId(dto.getMissionId())
                 .missionStatus(dto.getAnswerReviewStatus().getStatus())
                 .missionReward(missionReward)
                 .score(dto.getScore())
-                .build();
-    }
-
-    /**
-     * 選擇題與簡答題
-     *
-     * @param dto
-     * @param missionReward
-     * @return
-     */
-    public static MissionAnswerResponse getDefaultMissionAnswer(MissionAnswerDTO dto, Integer missionReward) {
-        return MissionAnswerResponse.builder()
-                .missionId(dto.getMissionId())
-                .missionStatus(dto.getAnswerReviewStatus().getStatus())
-                .missionReward(missionReward)
                 .answer(dto.getAnswerContent())
-                .score(dto.getScore())
                 .build();
     }
-
 
     /**
      * 上傳圖片任務一律直接回傳 Review 審核中

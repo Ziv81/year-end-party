@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserStakeDTO {
-    private Integer stackId;
+    private Integer stakeId;
     private StakeStatus status;
     private String title;
     private List<UserStakePlayerDTO> player;

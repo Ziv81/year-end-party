@@ -3,7 +3,6 @@ package com.changing.party.response;
 import com.changing.party.dto.UserStakeRoundDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ public class UserStakeHistoryResponse {
         List<UserStakePlayerResponse> userStakePlayerResponses = new ArrayList<>();
         userStakeRoundDTO.getPlayer().forEach(x -> userStakePlayerResponses.add(UserStakePlayerResponse.getUserStakePlayerResponse(x)));
         return UserStakeHistoryResponse.builder()
-                .stakeId(userStakeRoundDTO.getStackId())
+                .stakeId(userStakeRoundDTO.getStakeId())
                 .title(userStakeRoundDTO.getTitle())
                 .createTime(userStakeRoundDTO.getCreateTime().getTime())
                 .winner(userStakeRoundDTO.getWinner())

@@ -12,6 +12,6 @@ public class AnswerBinaryChooseValidator implements ConstraintValidator<Validate
     public boolean isValid(List<Integer> value, ConstraintValidatorContext context) {
         if (value.size() != GlobalVariable.getGlobalVariableService().getBINARY_QUESTION_LIST().size())
             return false;
-        return !value.stream().anyMatch(x -> x < 1 || x > 3);
+        return value.stream().noneMatch(x -> x < 1 || x > 3);
     }
 }
