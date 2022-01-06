@@ -11,6 +11,7 @@ import java.util.HashSet;
 @Getter
 public class LoginUser extends User {
     String title;
+    String userEnglishName;
     Integer userId;
     Integer userRank;
     Integer userPoint;
@@ -20,10 +21,11 @@ public class LoginUser extends User {
     public static LoginUser getLoginUser(UserModel user, int userRank) {
         Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("roleName"));
-        return new LoginUser(user.getEnglishName(),
+        return new LoginUser(user.getLoginName(),
+                user.getEnglishName(),
                 user.getPassword(),
                 authorities,
-                user.getJobTitle(),
+                String.format("%s %s", user.getDepartment().trim(), user.getJobTitle().trim()),
                 user.getUserId(),
                 userRank,
                 user.getUserPoint(),
@@ -32,6 +34,7 @@ public class LoginUser extends User {
     }
 
     private LoginUser(String username,
+                      String userEnglishName,
                       String password,
                       Collection<? extends GrantedAuthority> authorities,
                       String title,
@@ -47,5 +50,6 @@ public class LoginUser extends User {
         this.userPoint = userPoint;
         this.isCheckIn = isCheckIn;
         this.isAgree = isAgree;
+        this.userEnglishName = userEnglishName;
     }
 }

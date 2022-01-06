@@ -23,7 +23,7 @@ public class UserResponse {
 
     public static UserResponse getUserModel(UserModel user, int userRank) {
         return UserResponse.builder()
-                .title(user.getJobTitle())
+                .title(String.format("%s %s", user.getDepartment().trim(), user.getJobTitle().trim()))
                 .userName(user.getEnglishName())
                 .userId(user.getUserId().intValue())
                 .userPoint(user.getUserPoint())

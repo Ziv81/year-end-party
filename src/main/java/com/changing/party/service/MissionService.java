@@ -3,16 +3,20 @@ package com.changing.party.service;
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.ServerConstant;
 import com.changing.party.common.enums.AnswerReviewStatus;
+import com.changing.party.common.enums.LogType;
 import com.changing.party.common.exception.*;
 import com.changing.party.dto.MissionAnswerDTO;
 import com.changing.party.dto.MissionQuestionConfigDTO;
 import com.changing.party.model.MissionAnswerModel;
 import com.changing.party.model.MissionImageModel;
+import com.changing.party.model.ServiceLog;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.MissionAnswerRepository;
 import com.changing.party.repository.MissionImageRepository;
 import com.changing.party.request.MissionImageVerifyListRequest;
 import com.changing.party.response.MissionImageVerifyResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -54,13 +58,16 @@ public class MissionService {
     MissionAnswerRepository missionAnswerRepository;
     MissionImageRepository missionImageRepository;
     UserService userService;
+    ServiceLogService serviceLogService;
 
     public MissionService(MissionAnswerRepository missionAnswerRepository,
                           MissionImageRepository missionImageRepository,
-                          UserService userService) {
+                          UserService userService,
+                          ServiceLogService serviceLogService) {
         this.missionAnswerRepository = missionAnswerRepository;
         this.missionImageRepository = missionImageRepository;
         this.userService = userService;
+        this.serviceLogService = serviceLogService;
     }
 
     @Value("${year-end-party.mission.image.save.path}")
@@ -71,7 +78,7 @@ public class MissionService {
      *
      * @param missionImageVerifyListRequest
      */
-    public List<MissionImageVerifyResponse> verifyMissionImages(MissionImageVerifyListRequest missionImageVerifyListRequest) {
+    public List<MissionImageVerifyResponse> verifyMissionImages(MissionImageVerifyListRequest missionImageVerifyListRequest) throws JsonProcessingException {
         synchronized (KEY) {
             List<MissionImageVerifyResponse> missionImageVerifyResponses = new ArrayList<>();
             missionImageVerifyListRequest.getData().forEach(
@@ -101,6 +108,10 @@ public class MissionService {
                             missionAnswerModel.setScore(score);
                             missionAnswerRepository.save(missionAnswerModel);
                             userService.updateUserPoint(score);
+                            serviceLogService.logService(LogType.MISSION,
+                                    userService.getUserModelFromSecurityContext(),
+                                    ServiceLog.MISSION_VERIFY_IMAGE,
+                                    String.format("Image verify %s ,user update point %s", reviewStatus, score));
 
                             errorCode = ServerConstant.SERVER_SUCCESS_CODE;
                             errorMessage = ServerConstant.SERVER_SUCCESS_MESSAGE;
@@ -122,6 +133,10 @@ public class MissionService {
                                         .build());
                     }
             );
+            serviceLogService.logService(LogType.MISSION,
+                    userService.getUserModelFromSecurityContext(),
+                    ServiceLog.MISSION_VERIFY_IMAGE,
+                    new ObjectMapper().writeValueAsString(missionImageVerifyListRequest));
             return missionImageVerifyResponses;
         }
     }
@@ -242,13 +257,17 @@ public class MissionService {
                 log.error("Save image occur exception.", e);
             }
         }
-        missionAnswer.setAnswerContent(new String(
+        String imageIdList = new String(
                 Base64.getEncoder().encode(
                         String.join(",", missionImageList)
                                 .getBytes(StandardCharsets.UTF_8)),
-                StandardCharsets.UTF_8));
+                StandardCharsets.UTF_8);
+        missionAnswer.setAnswerContent(imageIdList);
         missionAnswerRepository.save(missionAnswer);
-
+        serviceLogService.logService(LogType.MISSION,
+                userService.getUserModelFromSecurityContext(),
+                ServiceLog.MISSION_ANSWER_IMAGE,
+                imageIdList);
     }
 
     /**
@@ -260,10 +279,17 @@ public class MissionService {
     public boolean answerMission(Integer missionId, String answer)
             throws MissionIDNotFoundException,
             MissionAlreadyAnswerException {
-        MissionQuestionConfigDTO missionQuestionConfigDTO = checkMissionIdExist(missionId);
-        UserModel user = userService.getUserModelFromSecurityContext();
-        checkUserNotAnswered(user.getUserId(), missionId);
-        return answerMission(user, missionQuestionConfigDTO, answer);
+        try {
+            MissionQuestionConfigDTO missionQuestionConfigDTO = checkMissionIdExist(missionId);
+            UserModel user = userService.getUserModelFromSecurityContext();
+            checkUserNotAnswered(user.getUserId(), missionId);
+            return answerMission(user, missionQuestionConfigDTO, answer);
+        } finally {
+            serviceLogService.logService(LogType.MISSION,
+                    userService.getUserModelFromSecurityContext(),
+                    ServiceLog.MISSION_ANSWER,
+                    String.format("Mission id : %s,Answer : %s", missionId, answer));
+        }
     }
 
     /**
@@ -285,6 +311,11 @@ public class MissionService {
                 .answerDate(new Date())
                 .build());
         userService.updateUserPoint(score);
+        String logContent = String.format("User answer %s, point update %s.", answerCorrect ? "correct" : "incorrect", score);
+        serviceLogService.logService(LogType.MISSION,
+                userService.getUserModelFromSecurityContext(),
+                ServiceLog.MISSION_ANSWER,
+                String.format("Mission id : %s,Answer : %s", missionQuestionConfigDTO.getMissionId(), answer));
         return answerCorrect;
     }
 

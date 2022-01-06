@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<UserModel, Integer> {
 
     UserModel findByUserId(int userId);
 
-    Optional<UserModel> findByEnglishNameIgnoreCase(String englishName);
+    Optional<UserModel> findByLoginNameIgnoreCase(String loginName);
 
     List<OnlyPointModel> findAllByOrderByUserPointDesc();
 

@@ -1,16 +1,17 @@
 package com.changing.party.service;
 
 import com.changing.party.common.GlobalVariable;
+import com.changing.party.common.enums.LogType;
 import com.changing.party.common.exception.AnswerBinaryNotOpenException;
 import com.changing.party.dto.BinaryAnswerListDTO;
 import com.changing.party.dto.BinaryAnswerStatisticsDTO;
-import com.changing.party.model.BinaryAnswerDetailModel;
-import com.changing.party.model.BinaryAnswerModel;
-import com.changing.party.model.BinaryAnswerStatisticsModel;
+import com.changing.party.model.*;
 import com.changing.party.repository.BinaryAnswerDetailRepository;
 import com.changing.party.repository.BinaryAnswerRepository;
 import com.changing.party.repository.BinaryAnswerStatisticsRepository;
 import com.changing.party.request.AnswerBinaryRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -58,12 +59,18 @@ public class BinaryService {
     BinaryAnswerDetailRepository binaryAnswerDetailRepository;
     BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
     UserService userService;
+    ServiceLogService serviceLogService;
 
-    public BinaryService(BinaryAnswerRepository binaryAnswerRepository, BinaryAnswerDetailRepository binaryAnswerDetailRepository, BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository, UserService userService) {
+    public BinaryService(BinaryAnswerRepository binaryAnswerRepository,
+                         BinaryAnswerDetailRepository binaryAnswerDetailRepository,
+                         BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository,
+                         UserService userService,
+                         ServiceLogService serviceLogService) {
         this.binaryAnswerRepository = binaryAnswerRepository;
         this.binaryAnswerDetailRepository = binaryAnswerDetailRepository;
         this.binaryAnswerStatisticsRepository = binaryAnswerStatisticsRepository;
         this.userService = userService;
+        this.serviceLogService = serviceLogService;
     }
 
     /**
@@ -102,15 +109,15 @@ public class BinaryService {
      *
      * @param answerBinary
      */
-    public void answerBinaryQuestion(AnswerBinaryRequest answerBinary) throws AnswerBinaryNotOpenException {
+    public void answerBinaryQuestion(AnswerBinaryRequest answerBinary) throws AnswerBinaryNotOpenException, JsonProcessingException {
 
         // 檢查是否允許答題
         if (binaryAnswerStatus != BinaryAnswerStatus.OPEN) {
             throw new AnswerBinaryNotOpenException();
         }
-
+        UserModel user = userService.getUserModelFromSecurityContext();
         BinaryAnswerModel binaryAnswerModel = binaryAnswerRepository.save(BinaryAnswerModel.builder()
-                .answeredUser(userService.getUserModelFromSecurityContext())
+                .answeredUser(user)
                 .answeredTime(new Date())
                 .build());
         for (int i = 0; i < answerBinary.getChoose().size(); i++) {
@@ -121,6 +128,7 @@ public class BinaryService {
                             .binaryAnswerId(binaryAnswerModel)
                             .build());
         }
+        serviceLogService.logService(LogType.BINARY, user, ServiceLog.BINARY_ANSWER, new ObjectMapper().writeValueAsString(answerBinary));
     }
 
     /**
@@ -128,12 +136,18 @@ public class BinaryService {
      */
     public void updateUserScoreByBinarySquareUp() {
         binaryAnswerRepository.findAll().forEach(
-                binaryAnswerModel ->
-                        userService.updateUserPoint(binaryAnswerModel
-                                .getBinaryAnswerDetails()
-                                .stream()
-                                .mapToInt(BinaryAnswerDetailModel::getScore)
-                                .sum())
+                binaryAnswerModel -> {
+                    int pointSum = binaryAnswerModel
+                            .getBinaryAnswerDetails()
+                            .stream()
+                            .mapToInt(BinaryAnswerDetailModel::getScore)
+                            .sum();
+                    userService.updateUserPoint(pointSum);
+                    serviceLogService.logService(LogType.BINARY,
+                            binaryAnswerModel.getAnsweredUser(),
+                            ServiceLog.BINARY_SQUARE_UP,
+                            String.format("Total point %s", pointSum));
+                }
 
         );
     }
@@ -224,6 +238,10 @@ public class BinaryService {
         binaryAnswerDetailRepository.deleteAll();
         binaryAnswerRepository.deleteAll();
         binaryAnswerStatisticsRepository.deleteAll();
+        serviceLogService.logService(LogType.BINARY,
+                userService.getUserModelFromSecurityContext(),
+                ServiceLog.BINARY_SQUARE_UP,
+                "Clear all binary answer data");
     }
 
     public static BinaryAnswerStatus getBinaryAnswerStatus() {

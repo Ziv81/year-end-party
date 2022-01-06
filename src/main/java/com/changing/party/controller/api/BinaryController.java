@@ -4,6 +4,7 @@ import com.changing.party.common.ServerConstant;
 import com.changing.party.request.AnswerBinaryRequest;
 import com.changing.party.response.Response;
 import com.changing.party.service.BinaryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -31,7 +32,7 @@ public class BinaryController {
     }
 
     @PostMapping
-    public Response answeredBinary(@Valid @RequestBody AnswerBinaryRequest answerBinary) {
+    public Response answeredBinary(@Valid @RequestBody AnswerBinaryRequest answerBinary) throws JsonProcessingException {
         binaryService.answerBinaryQuestion(answerBinary);
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)

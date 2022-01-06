@@ -3,6 +3,8 @@ package com.changing.party.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Entity
@@ -36,7 +38,6 @@ public class StakeDetail {
     @Column(name = "stakePoint")
     private Integer stakePoint;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "stake_time")
     private Date stakeTime;
 

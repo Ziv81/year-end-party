@@ -1,6 +1,5 @@
 package com.changing.party.model;
 
-import com.changing.party.model.BinaryAnswerModel;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +11,8 @@ import java.util.Date;
 @Entity
 @Table(name = "year_end_party_user", indexes = {
         @Index(name = "idx_usermodel_englishname", columnList = "englishName"),
-        @Index(name = "idx_usermodel_userid", columnList = "userId")
+        @Index(name = "idx_usermodel_userid", columnList = "userId"),
+        @Index(name = "idx_usermodel_loginname", columnList = "loginName")
 })
 @Data
 @EqualsAndHashCode(exclude = "answerList")
@@ -30,6 +30,9 @@ public class UserModel {
 
     @Column(name = "englishName", nullable = false)
     private String englishName;
+
+    @Column(name = "loginName", nullable = false)
+    private String loginName;
 
     @Column(name = "department", nullable = false)
     private String department;

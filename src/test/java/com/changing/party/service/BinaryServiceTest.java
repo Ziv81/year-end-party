@@ -38,6 +38,8 @@ class BinaryServiceTest {
     private BinaryAnswerStatisticsRepository binaryAnswerStatisticsRepository;
     @Mock
     private UserService userService;
+    @Mock
+    private ServiceLogService serviceLogService;
 
     @InjectMocks
     private BinaryService binaryService;
@@ -49,7 +51,8 @@ class BinaryServiceTest {
                 binaryAnswerRepository,
                 binaryAnswerDetailRepository,
                 binaryAnswerStatisticsRepository,
-                userService);
+                userService,
+                serviceLogService);
         List<BinaryAnswerDetailDTO> binaryAnswerDTOList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             binaryAnswerDTOList.add(BinaryAnswerDetailDTO.builder()

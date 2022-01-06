@@ -59,7 +59,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                         .tokenType("Bearer")
                         .userInfo(UserResponse.builder()
                                 .title(user.getTitle())
-                                .userName(user.getUsername())
+                                .userName(user.getUserEnglishName())
                                 .userId(user.getUserId())
                                 .userPoint(user.getUserPoint())
                                 .userRank(user.getUserRank())

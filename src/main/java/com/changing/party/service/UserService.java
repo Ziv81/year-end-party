@@ -5,7 +5,6 @@ import com.changing.party.common.exception.GetUserRankException;
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.dto.UserLeaderBoardDTO;
 import com.changing.party.model.LoginUser;
-import com.changing.party.model.OnlyNameModel;
 import com.changing.party.model.OnlyPointModel;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.UserRepository;
@@ -22,7 +21,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -58,6 +60,7 @@ public class UserService implements UserDetailsService {
                         .chineseName(user.getChineseName())
                         .englishName(user.getEnglishName())
                         .department(String.format("%s %s", user.getDepartment(), user.getGroup()))
+                        .loginName(user.getEmail().replace("@changingtec.com", ""))
                         .jobTitle(user.getJobTitle())
                         .email(user.getEmail())
                         .createDate(new Date())
@@ -69,6 +72,7 @@ public class UserService implements UserDetailsService {
                 UserModel existUser = existUserOptional.get();
                 existUser.setChineseName(user.getChineseName());
                 existUser.setEnglishName(user.getEnglishName());
+                existUser.setLoginName(user.getEmail().replace("@changingtec.com", ""));
                 existUser.setDepartment(String.format("%s %s", user.getDepartment(), user.getGroup()));
                 existUser.setJobTitle(user.getJobTitle());
                 existUser.setPassword(passwordEncoder.encode(passwordHash));
@@ -88,7 +92,7 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel user = userRepository.findByEnglishNameIgnoreCase(username)
+        UserModel user = userRepository.findByLoginNameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found in the database."));
         user.setLastLogin(new Date());
         userRepository.save(user);
@@ -110,7 +114,7 @@ public class UserService implements UserDetailsService {
         if (usernamePasswordAuthenticationToken == null) {
             return null;
         }
-        return userRepository.findByEnglishNameIgnoreCase(usernamePasswordAuthenticationToken.getName())
+        return userRepository.findByLoginNameIgnoreCase(usernamePasswordAuthenticationToken.getName())
                 .orElseThrow(() -> new UsernameNotFoundException(usernamePasswordAuthenticationToken.getName()));
     }
 

@@ -323,8 +323,8 @@ public class StakeService {
                     .userModel(user)
                     .stakePlayer(stakePlayer)
                     .stakePoint(userStakePlayerDTO.getPoint())
-                    .stakeTime(new Date())
                     .winPoint(0)
+                    .stakeTime(new Date())
                     .build());
         }
 

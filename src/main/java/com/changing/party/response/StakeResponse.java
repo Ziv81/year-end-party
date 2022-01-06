@@ -14,6 +14,7 @@ public class StakeResponse {
     String title;
     Integer status;
     List<StakePlayerResponse> player;
+    Integer winner;
 
     public static StakeResponse getStakeResponse(StakeDTO stakeDTO) {
         List<StakePlayerResponse> player = new ArrayList<>();
@@ -23,6 +24,7 @@ public class StakeResponse {
                 .title(stakeDTO.getTitle())
                 .status(stakeDTO.getStatus().getStatus())
                 .player(player)
+                .winner(stakeDTO.getWinnerId())
                 .build();
     }
 }
