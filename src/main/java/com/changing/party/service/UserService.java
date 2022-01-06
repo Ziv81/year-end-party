@@ -128,16 +128,4 @@ public class UserService implements UserDetailsService {
     public void resetUserPoint() {
         userRepository.resetUserPoint();
     }
-
-    /**
-     * 查詢使用者名字清單
-     *
-     * @return
-     */
-    public List<String> getUserNameList() {
-        List<OnlyNameModel> userNameList = userRepository.findByOrderByEnglishNameAsc();
-        List<String> result = new ArrayList<>();
-        userNameList.forEach(x -> result.add(x.getEnglishName()));
-        return result;
-    }
 }

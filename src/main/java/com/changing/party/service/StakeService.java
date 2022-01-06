@@ -6,10 +6,7 @@ import com.changing.party.dto.StakeDTO;
 import com.changing.party.dto.UserStakeDTO;
 import com.changing.party.dto.UserStakePlayerDTO;
 import com.changing.party.dto.UserStakeRoundDTO;
-import com.changing.party.model.Stake;
-import com.changing.party.model.StakeDetail;
-import com.changing.party.model.StakePlayer;
-import com.changing.party.model.UserModel;
+import com.changing.party.model.*;
 import com.changing.party.repository.StakeDetailRepository;
 import com.changing.party.repository.StakePlayerRepository;
 import com.changing.party.repository.StakeRepository;
@@ -163,19 +160,26 @@ public class StakeService {
     /**
      * 計算最後一輪下注的結果
      */
-    private void calcBetsResult(Stake stake, int winnerId) {
+    private void calcBetsResult(Stake stake, int winnerPlayer) throws StakeWinnerPlayIdNotFoundException {
+        int winnerId = stake
+                .getStakePlayers()
+                .stream()
+                .filter(x -> x.getPlayerId() == winnerPlayer)
+                .findFirst()
+                .orElseThrow(StakeWinnerPlayIdNotFoundException::new)
+                .getPlayerId();
         int totalLosePoint = stakeDetailRepository
                 .findByStake_IdAndStakePlayer_PlayerIdIsNot(stake.getId(), winnerId)
                 .stream()
-                .mapToInt(x -> x.getStakePoint())
+                .mapToInt(StakeOnlyBetPoint::getStakePoint)
                 .sum();
 
         Set<StakeDetail> winnerList = stakeDetailRepository.findByStake_IdAndStakePlayer_PlayerId(stake.getId(), winnerId);
-        int totalWinPoint = winnerList.stream().mapToInt(x -> x.getStakePoint()).sum();
+        int totalWinPoint = winnerList.stream().mapToInt(StakeDetail::getStakePoint).sum();
 
         for (StakeDetail stakeDetail : winnerList) {
-            double winPointPercentage = stakeDetail.getStakePoint() / totalWinPoint;
-            int winPoint = (int) Math.ceil(totalLosePoint * winPointPercentage);
+            double winPointPercentage = 1.0 * stakeDetail.getStakePoint() / totalWinPoint;
+            int winPoint = (int) Math.ceil(totalLosePoint * winPointPercentage) + stakeDetail.getStakePoint();
             stakeDetail.setWinPoint(winPoint);
             stakeDetailRepository.save(stakeDetail);
             userService.updateUserPoint(winPoint);
@@ -257,6 +261,8 @@ public class StakeService {
                 .status(lastStake.getStatus())
                 .title(lastStake.getTitle())
                 .player(userStakePlayerDTOs)
+                .winner(lastStake.getWinnerId())
+                .winPoint(stakeDetails.stream().mapToInt(x -> x.getWinPoint()).sum())
                 .build();
     }
 

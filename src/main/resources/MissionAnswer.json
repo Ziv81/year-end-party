@@ -20,22 +20,22 @@
       "missionId": 3,
       "missionType": 3,
       "missionAnswer": [
-        "楊文和"
+        "猴"
       ],
       "missionReward":100
     },
     {
       "missionId": 4,
       "missionType": 2,
-      "missionAnswer": 1,
+      "missionAnswer": 4,
       "missionReward":100
     },
     {
       "missionId": 5,
       "missionType": 3,
       "missionAnswer": [
-        "暖手",
-        "洗腳"
+        "2022",
+        "111"
       ],
       "missionReward":100
     },
@@ -43,28 +43,28 @@
       "missionId": 6,
       "missionType": 3,
       "missionAnswer": [
-        "窗櫺"
+        "6"
       ],
       "missionReward":100
     },
     {
       "missionId": 7,
       "missionType": 2,
-      "missionAnswer": 2,
+      "missionAnswer": 3,
       "missionReward":100
     },
     {
       "missionId": 8,
       "missionType": 3,
       "missionAnswer": [
-        "4"
+        "2"
       ],
       "missionReward":100
     },
     {
       "missionId": 9,
       "missionType": 2,
-      "missionAnswer": 3,
+      "missionAnswer": 4,
       "missionReward":100
     }
   ]

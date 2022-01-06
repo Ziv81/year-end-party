@@ -18,6 +18,8 @@ public class UserStakeResponse {
     Integer stakeId;
     String title;
     List<UserStakePlayerResponse> player;
+    Integer winner;
+    Integer winPoint;
 
     public static UserStakeResponse getUserStakeResponse(UserStakeDTO userStakeDTO) {
         if (userStakeDTO == null)
@@ -29,6 +31,8 @@ public class UserStakeResponse {
                 .stakeId(userStakeDTO.getStakeId())
                 .title(userStakeDTO.getTitle())
                 .player(player)
+                .winner(userStakeDTO.getWinner())
+                .winPoint(userStakeDTO.getWinPoint())
                 .build();
     }
 }

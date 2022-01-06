@@ -1,5 +1,6 @@
 package com.changing.party.controller.management;
 
+import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.ServerConstant;
 import com.changing.party.response.GetUserNameListResponse;
 import com.changing.party.response.Response;
@@ -36,7 +37,7 @@ public class ManagementUserController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(GetUserNameListResponse.builder().result(userService.getUserNameList()).build())
+                .data(GetUserNameListResponse.builder().result(GlobalVariable.getGlobalVariableService().getUserNameList()).build())
                 .build();
     }
 

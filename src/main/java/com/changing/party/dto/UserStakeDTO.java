@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,4 +17,6 @@ public class UserStakeDTO {
     private StakeStatus status;
     private String title;
     private List<UserStakePlayerDTO> player;
+    private Integer winner;
+    private Integer winPoint;
 }

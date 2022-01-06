@@ -24,7 +24,8 @@ public interface UserRepository extends JpaRepository<UserModel, Integer> {
 
     List<OnlyPointModel> findAllByOrderByUserPointDesc();
 
-    List<OnlyNameModel> findByOrderByEnglishNameAsc();
+    List<UserModel> findByOrderByEmailAsc();
+
 
     @Modifying
     @Query("update UserModel set userPoint = 0")

@@ -4,7 +4,6 @@ import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.changing.party.dto.MissionQuestionConfigDTO;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,4 +29,5 @@ public class GlobalVariable {
     private List<MissionQuestionConfigDTO> MISSION_QUESTION_LIST = new ArrayList<>();
     private Map<Integer, MissionQuestionConfigDTO.MissionType> MISSION_ID_TYPE_MAP = new HashMap<>();
     private Map<Integer, Integer> MISSION_ID_REWARD_MAP = new HashMap<>();
+    private List<String> userNameList = new ArrayList<>();
 }
