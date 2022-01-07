@@ -8,6 +8,7 @@ import com.changing.party.model.MissionImageModel;
 import com.changing.party.request.MissionImageVerifyListRequest;
 import com.changing.party.response.*;
 import com.changing.party.service.MissionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -67,7 +68,7 @@ public class ManagementMissionController {
     }
 
     @PostMapping(value = "/mission/verify")
-    public ResponseEntity<Response> verifyMissionImage(@Valid @RequestBody MissionImageVerifyListRequest missionImageVerifyListRequest) {
+    public ResponseEntity<Response> verifyMissionImage(@Valid @RequestBody MissionImageVerifyListRequest missionImageVerifyListRequest) throws JsonProcessingException {
         List<MissionImageVerifyResponse> missionImageVerifyResponses = missionService.verifyMissionImages(missionImageVerifyListRequest);
         int errorCode =
                 missionImageVerifyResponses.stream().anyMatch(x -> !x.getErrorCode().equals(ServerConstant.SERVER_SUCCESS_CODE)) ?

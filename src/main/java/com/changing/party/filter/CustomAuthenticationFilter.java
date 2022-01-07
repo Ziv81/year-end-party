@@ -55,7 +55,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .data(GetTokenResponse.builder()
                         .accessToken(JWTUtil.getJWTAccessToken(user))
                         .refreshToken(JWTUtil.getJWTRefreshToken(user))
-                        .expiresIn(900)
+                        .expiresIn(86400)
                         .tokenType("Bearer")
                         .userInfo(UserResponse.builder()
                                 .title(user.getTitle())

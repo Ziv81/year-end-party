@@ -2,6 +2,7 @@ package com.changing.party.service;
 
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.exception.GetUserRankException;
+import com.changing.party.common.exception.UserAlreadyCheckInException;
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.dto.UserLeaderBoardDTO;
 import com.changing.party.model.LoginUser;
@@ -131,5 +132,28 @@ public class UserService implements UserDetailsService {
 
     public void resetUserPoint() {
         userRepository.resetUserPoint();
+    }
+
+    /**
+     * 使用者報到
+     *
+     * @param userId
+     */
+    public void userCheckIn(int userId) throws UserAlreadyCheckInException {
+        UserModel userModel = Optional.ofNullable(userRepository.findByUserId(userId))
+                .orElseThrow(() -> new UserIdNotFoundException(userId));
+        if (userModel.getIsCheckIn() != null && userModel.getIsCheckIn() == 1) {
+            throw new UserAlreadyCheckInException();
+        }
+        userModel.setIsCheckIn(1);
+        userRepository.save(userModel);
+    }
+
+    /**
+     * 測試用，重設所有使用者報到狀態
+     *
+     */
+    public void resetUserCheckIn() {
+        userRepository.resetUserIsCheckIn();
     }
 }

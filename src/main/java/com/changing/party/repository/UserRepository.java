@@ -28,6 +28,10 @@ public interface UserRepository extends JpaRepository<UserModel, Integer> {
 
 
     @Modifying
+    @Query("update UserModel set isCheckIn = 0")
+    Integer resetUserIsCheckIn();
+
+    @Modifying
     @Query("update UserModel set userPoint = 0")
     Integer resetUserPoint();
 }

@@ -266,6 +266,15 @@ public class ServerExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(UserAlreadyCheckInException.class)
+    public Object UserAlreadyCheckInExceptionHandler(UserAlreadyCheckInException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("User already check in.")
+                        .build());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public Object unCaughtException(Exception exception) {
