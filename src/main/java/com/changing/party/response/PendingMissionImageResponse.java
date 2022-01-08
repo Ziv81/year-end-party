@@ -16,11 +16,13 @@ public class PendingMissionImageResponse {
     Integer missionId;
     Integer userId;
     List<String> imageUrl;
+    String userName;
 
     public static PendingMissionImageResponse getPendingMissionImageResponse(MissionAnswerDTO missionAnswerDTO) {
         return PendingMissionImageResponse.builder()
                 .missionId(missionAnswerDTO.getMissionId())
                 .userId(missionAnswerDTO.getUserModel().getUserId())
+                .userName(missionAnswerDTO.getUserModel().getLoginName())
                 .imageUrl(getImageUrlByAnswerContent(missionAnswerDTO.getAnswerContent()))
                 .build();
     }

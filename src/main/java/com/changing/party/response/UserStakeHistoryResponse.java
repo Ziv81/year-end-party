@@ -20,6 +20,7 @@ public class UserStakeHistoryResponse {
     Integer winner;
     Integer winPoint;
     List<UserStakePlayerResponse> player;
+    Integer beforePoint;
 
     public static UserStakeHistoryResponse getUserStakeHistoryResponse(UserStakeRoundDTO userStakeRoundDTO) {
         List<UserStakePlayerResponse> userStakePlayerResponses = new ArrayList<>();
@@ -31,6 +32,7 @@ public class UserStakeHistoryResponse {
                 .winner(userStakeRoundDTO.getWinner())
                 .winPoint(userStakeRoundDTO.getWinPoint())
                 .player(userStakePlayerResponses)
+                .beforePoint(userStakeRoundDTO.getBeforePoint())
                 .build();
     }
 }

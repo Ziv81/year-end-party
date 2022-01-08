@@ -43,4 +43,7 @@ public class StakeDetail {
 
     @Column(name = "winPoint")
     private Integer winPoint;
+
+    @Column(name = "beferPoint")
+    private Integer beforePoint;
 }

@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -182,7 +183,7 @@ public class StakeService {
             int winPoint = (int) Math.ceil(totalLosePoint * winPointPercentage) + stakeDetail.getStakePoint();
             stakeDetail.setWinPoint(winPoint);
             stakeDetailRepository.save(stakeDetail);
-            userService.updateUserPoint(winPoint);
+            userService.updateUserPoint(stakeDetail.getUserModel(), winPoint);
         }
     }
 
@@ -206,7 +207,7 @@ public class StakeService {
      */
     public List<UserStakeRoundDTO> getUserStakeHistory() throws StakeIdNotFoundException {
         UserModel user = userService.getUserModelFromSecurityContext();
-        Set<StakeDetail> stakeDetailList = stakeDetailRepository.findByUserModel_UserId(user.getUserId());
+        Set<StakeDetail> stakeDetailList = stakeDetailRepository.findByUserModel_UserIdOrderByIdAsc(user.getUserId());
         Map<Object, List<StakeDetail>> stakeDetailHashMap =
                 stakeDetailList.stream().collect(Collectors.groupingBy(x -> x.getStake().getId()));
         List<UserStakeRoundDTO> userStakeRoundDTOs = new ArrayList<>();
@@ -230,9 +231,11 @@ public class StakeService {
         List<UserStakePlayerDTO> userStakePlayerDTOs = getUserStakePlayerDTOList(lastStake.getStakePlayers());
         addUserStakePoint(userStakePlayerDTOs, stakeDetails);
         Date createTime = null;
+        Integer beforePoint = null;
         Optional<StakeDetail> stakeDetail = stakeDetails.stream().findFirst();
         if (stakeDetail.isPresent()) {
             createTime = stakeDetail.get().getStakeTime();
+            beforePoint = stakeDetail.get().getBeforePoint();
         }
         return UserStakeRoundDTO.builder()
                 .stakeId(lastStake.getId())
@@ -240,8 +243,9 @@ public class StakeService {
                 .title(lastStake.getTitle())
                 .player(userStakePlayerDTOs)
                 .winner(lastStake.getWinnerId())
-                .winPoint(stakeDetails.stream().mapToInt(x -> x.getWinPoint()).sum())
+                .winPoint(stakeDetails.stream().mapToInt(StakeDetail::getWinPoint).sum())
                 .createTime(createTime)
+                .beforePoint(beforePoint)
                 .build();
     }
 
@@ -311,13 +315,13 @@ public class StakeService {
         }
 
         List<StakeDetail> saveStakeDetails = new ArrayList<>();
+        int userCurrentPoint = user.getUserPoint();
         for (UserStakePlayerDTO userStakePlayerDTO : userStakeDTOList) {
             // 確認 player id 存在
             StakePlayer stakePlayer =
                     stakePlayers.stream()
                             .filter(x -> x.getPlayerId().equals(userStakePlayerDTO.getPlayerId())).findFirst()
                             .orElseThrow(() -> new StakePlayerIdNotFoundException(userStakePlayerDTO.getPlayerId()));
-
             saveStakeDetails.add(StakeDetail.builder()
                     .stake(stake)
                     .userModel(user)
@@ -325,11 +329,13 @@ public class StakeService {
                     .stakePoint(userStakePlayerDTO.getPoint())
                     .winPoint(0)
                     .stakeTime(new Date())
+                    .beforePoint(userCurrentPoint)
                     .build());
+            userCurrentPoint -= userStakePlayerDTO.getPoint();
         }
 
         saveStakeDetails.forEach(x -> stakeDetailRepository.save(x));
-        userService.updateUserPoint(-totalBetsPoint);
+        userService.updateUserPoint(user, -totalBetsPoint);
     }
 
     /**

@@ -142,7 +142,7 @@ public class BinaryService {
                             .stream()
                             .mapToInt(BinaryAnswerDetailModel::getScore)
                             .sum();
-                    userService.updateUserPoint(pointSum);
+                    userService.updateUserPoint(binaryAnswerModel.getAnsweredUser(), pointSum);
                     serviceLogService.logService(LogType.BINARY,
                             binaryAnswerModel.getAnsweredUser(),
                             ServiceLog.BINARY_SQUARE_UP,

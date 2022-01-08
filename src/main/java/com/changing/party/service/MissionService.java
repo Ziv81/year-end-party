@@ -107,7 +107,7 @@ public class MissionService {
                             missionAnswerModel.setAnswerReviewStatus(reviewStatus);
                             missionAnswerModel.setScore(score);
                             missionAnswerRepository.save(missionAnswerModel);
-                            userService.updateUserPoint(score);
+                            userService.updateUserPoint(missionAnswerModel.getUserModel(), score);
                             serviceLogService.logService(LogType.MISSION,
                                     userService.getUserModelFromSecurityContext(),
                                     ServiceLog.MISSION_VERIFY_IMAGE,
@@ -310,7 +310,7 @@ public class MissionService {
                 .answerContent(answer)
                 .answerDate(new Date())
                 .build());
-        userService.updateUserPoint(score);
+        userService.updateUserPoint(user, score);
         String logContent = String.format("User answer %s, point update %s.", answerCorrect ? "correct" : "incorrect", score);
         serviceLogService.logService(LogType.MISSION,
                 userService.getUserModelFromSecurityContext(),

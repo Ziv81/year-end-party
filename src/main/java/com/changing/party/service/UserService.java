@@ -124,11 +124,11 @@ public class UserService implements UserDetailsService {
      *
      * @param userPoint
      */
-    public void updateUserPoint(int userPoint) {
-        UserModel user = getUserModelFromSecurityContext();
+    public void updateUserPoint(UserModel user, int userPoint) {
         user.setUserPoint(user.getUserPoint() + userPoint);
         userRepository.save(user);
     }
+
 
     public void resetUserPoint() {
         userRepository.resetUserPoint();
@@ -151,7 +151,6 @@ public class UserService implements UserDetailsService {
 
     /**
      * 測試用，重設所有使用者報到狀態
-     *
      */
     public void resetUserCheckIn() {
         userRepository.resetUserIsCheckIn();

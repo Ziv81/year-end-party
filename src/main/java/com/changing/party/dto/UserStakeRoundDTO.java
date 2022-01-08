@@ -21,4 +21,5 @@ public class UserStakeRoundDTO {
     private Date createTime;
     private Integer winner;
     private Integer winPoint;
+    private Integer beforePoint;
 }

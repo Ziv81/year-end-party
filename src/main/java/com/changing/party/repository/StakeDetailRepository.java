@@ -9,7 +9,7 @@ import java.util.Set;
 public interface StakeDetailRepository extends JpaRepository<StakeDetail, Integer> {
     Set<StakeDetail> findByUserModel_UserIdAndStake_Id(Integer userId, Integer id);
 
-    Set<StakeDetail> findByUserModel_UserId(Integer userId);
+    Set<StakeDetail> findByUserModel_UserIdOrderByIdAsc(Integer userId);
 
     Set<StakeOnlyBetPoint> findByStake_IdAndStakePlayer_PlayerIdIsNot(Integer id, Integer playerId);
 
