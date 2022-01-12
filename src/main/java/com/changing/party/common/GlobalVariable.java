@@ -4,12 +4,13 @@ import com.changing.party.dto.BinaryAnswerDetailDTO;
 import com.changing.party.dto.MissionQuestionConfigDTO;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Getter
 @Setter
@@ -30,4 +31,17 @@ public class GlobalVariable {
     private Map<Integer, MissionQuestionConfigDTO.MissionType> MISSION_ID_TYPE_MAP = new HashMap<>();
     private Map<Integer, Integer> MISSION_ID_REWARD_MAP = new HashMap<>();
     private List<String> userNameList = new ArrayList<>();
+    @Value("${year-end-party.open.time}")
+    private String openTimeString;
+    private Date openTime;
+
+    public boolean isOpen() {
+        return new Date().after(openTime);
+    }
+
+    @PostConstruct
+    public void postConstruct() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        getGlobalVariableService().openTime=sdf.parse(openTimeString);
+    }
 }

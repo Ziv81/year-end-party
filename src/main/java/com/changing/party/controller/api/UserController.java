@@ -1,16 +1,17 @@
 package com.changing.party.controller.api;
 
 import com.changing.party.common.ServerConstant;
+import com.changing.party.common.exception.OnlyCanGetOwnUserInfoException;
 import com.changing.party.common.exception.UploadUserIsEmptyException;
-import com.changing.party.response.Response;
 import com.changing.party.request.UploadUsersRequest;
+import com.changing.party.response.Response;
+import com.changing.party.response.UserResponse;
 import com.changing.party.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,11 +29,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Response findUserById(@PathVariable @Size(max = 200) int id) {
+    public Response findUserById(@PathVariable @Size(max = 200) int id) throws OnlyCanGetOwnUserInfoException {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(ServerConstant.SERVER_SUCCESS_MESSAGE)
-                .data(userService.getUserById(id))
+                .data(UserResponse.getUserModel(userService.getCurrentUserDTO(id)))
                 .build();
     }
 

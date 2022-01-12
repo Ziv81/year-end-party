@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -231,11 +230,10 @@ public class StakeService {
         List<UserStakePlayerDTO> userStakePlayerDTOs = getUserStakePlayerDTOList(lastStake.getStakePlayers());
         addUserStakePoint(userStakePlayerDTOs, stakeDetails);
         Date createTime = null;
-        Integer beforePoint = null;
+        Integer beforePoint = stakeDetails.stream().mapToInt(StakeDetail::getBeforePoint).max().orElse(0);
         Optional<StakeDetail> stakeDetail = stakeDetails.stream().findFirst();
         if (stakeDetail.isPresent()) {
             createTime = stakeDetail.get().getStakeTime();
-            beforePoint = stakeDetail.get().getBeforePoint();
         }
         return UserStakeRoundDTO.builder()
                 .stakeId(lastStake.getId())

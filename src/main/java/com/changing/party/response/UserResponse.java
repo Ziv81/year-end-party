@@ -1,7 +1,7 @@
 package com.changing.party.response;
 
 
-import com.changing.party.model.UserModel;
+import com.changing.party.dto.UserModelDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,13 +21,13 @@ public class UserResponse {
     private Integer isCheckIn;
     private Integer isAgree;
 
-    public static UserResponse getUserModel(UserModel user, int userRank) {
+    public static UserResponse getUserModel(UserModelDTO user) {
         return UserResponse.builder()
                 .title(String.format("%s %s", user.getDepartment().trim(), user.getJobTitle().trim()))
                 .userName(user.getEnglishName())
                 .userId(user.getUserId().intValue())
                 .userPoint(user.getUserPoint())
-                .userRank(userRank)
+                .userRank(user.getRank())
                 .isCheckIn(user.getIsCheckIn())
                 .isAgree(user.getIsAgree())
                 .build();

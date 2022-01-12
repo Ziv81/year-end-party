@@ -1,6 +1,7 @@
 package com.changing.party.service;
 
 import com.changing.party.common.exception.UserIdNotFoundException;
+import com.changing.party.dto.UserModelDTO;
 import com.changing.party.repository.UserRepository;
 import com.changing.party.model.OnlyNameAndPointModel;
 import com.changing.party.response.UserResponse;
@@ -61,11 +62,11 @@ class UserServiceTest {
     @Test
     void should_return_user_when_get_user_success() {
         when(userRepository.findByUserId(Mockito.anyInt())).thenReturn(defaultUserModel);
-        UserResponse user = userService.getUserById(200);
+        UserModelDTO user = userService.getUserById(200);
         Assertions.assertEquals(10, user.getUserId());
-        Assertions.assertEquals("Ziv", user.getUserName());
+        Assertions.assertEquals("Ziv", user.getEnglishName());
         Assertions.assertEquals(100, user.getUserPoint());
-        Assertions.assertEquals("Engineer", user.getTitle());
+        Assertions.assertEquals("Engineer", user.getJobTitle());
     }
 
     /**

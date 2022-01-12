@@ -4,6 +4,7 @@ import com.changing.party.common.JWTUtil;
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.controller.api.UserController;
 import com.changing.party.dto.UserLeaderBoardDTO;
+import com.changing.party.dto.UserModelDTO;
 import com.changing.party.model.LoginUser;
 import com.changing.party.response.UserResponse;
 import com.changing.party.service.UserService;
@@ -59,13 +60,7 @@ class UserControllerTest {
     void tearDown() {
     }
 
-    private static UserResponse defaultUser = UserResponse.builder()
-            .userId(10)
-            .userName("Ziv")
-            .title("技術處 四組")
-            .userPoint(100)
-            .userRank(50)
-            .build();
+    private static UserModelDTO defaultUser = new UserModelDTO();
 
     private static List<UserResponse> defaultUserList = Arrays.asList(
             UserResponse.builder()

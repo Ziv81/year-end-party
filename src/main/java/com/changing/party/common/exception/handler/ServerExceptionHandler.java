@@ -275,6 +275,14 @@ public class ServerExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(OnlyCanGetOwnUserInfoException.class)
+    public Object onlyCanGetOwnUserInfoExceptionHandler(OnlyCanGetOwnUserInfoException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Only can get own user info.")
+                        .build());
+    }
 
     @ExceptionHandler(Exception.class)
     public Object unCaughtException(Exception exception) {

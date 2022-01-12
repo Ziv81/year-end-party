@@ -2,15 +2,16 @@ package com.changing.party.service;
 
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.exception.GetUserRankException;
+import com.changing.party.common.exception.OnlyCanGetOwnUserInfoException;
 import com.changing.party.common.exception.UserAlreadyCheckInException;
 import com.changing.party.common.exception.UserIdNotFoundException;
 import com.changing.party.dto.UserLeaderBoardDTO;
+import com.changing.party.dto.UserModelDTO;
 import com.changing.party.model.LoginUser;
 import com.changing.party.model.OnlyPointModel;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.UserRepository;
 import com.changing.party.request.UploadUserRequest;
-import com.changing.party.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,11 +37,16 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public UserModelDTO getCurrentUserDTO(int id) throws OnlyCanGetOwnUserInfoException {
+        UserModel userModel = getUserModelFromSecurityContext();
+        if (userModel.getUserId() != id)
+            throw new OnlyCanGetOwnUserInfoException();
+        return UserModelDTO.getUserDTO(userModel, getUserRank(userModel.getUserPoint()));
+    }
 
-    public UserResponse getUserById(int id) {
-        UserModel userModel = Optional.ofNullable(userRepository.findByUserId(id))
-                .orElseThrow(() -> new UserIdNotFoundException(id));
-        return UserResponse.getUserModel(userModel, getUserRank(userModel.getUserPoint()));
+    public UserModelDTO getUserById(int id) {
+        UserModel userModel = getUserModelById(id);
+        return UserModelDTO.getUserDTO(userModel, getUserRank(userModel.getUserPoint()));
     }
 
     public UserLeaderBoardDTO getUserLeaderBoard() {
@@ -154,5 +160,22 @@ public class UserService implements UserDetailsService {
      */
     public void resetUserCheckIn() {
         userRepository.resetUserIsCheckIn();
+    }
+
+    /**
+     * 更新使用者密碼欄位
+     *
+     * @param userModelDTO
+     * @param sha256Password SHA-256 password
+     */
+    public void updateUserPassword(UserModelDTO userModelDTO, String sha256Password) {
+        UserModel userModel = getUserModelById(userModelDTO.getUserId());
+        userModel.setPassword(passwordEncoder.encode(sha256Password));
+        userRepository.save(userModel);
+    }
+
+    private UserModel getUserModelById(Integer id) {
+        return Optional.ofNullable(userRepository.findByUserId(id))
+                .orElseThrow(() -> new UserIdNotFoundException(id));
     }
 }
