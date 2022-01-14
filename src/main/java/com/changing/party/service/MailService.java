@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -73,10 +75,12 @@ public class MailService {
         helper.setFrom("ziv@changingtec.com");
         helper.setTo(user.getEmail());
         helper.setSubject("尾牙測試");
-        helper.setText("<html><body><img src=\"cid:staticImage\" ></body></html>", true);
+
+        String templateString = FreeMarkerTemplateUtils.processTemplateIntoString(mailConfiguration.getTemplate("SendPasswordTemplate.html"), new HashMap<>());
+        helper.setText(templateString, true);
 
         CGByteArrayResource byteArrayResource = new CGByteArrayResource(image);
-        helper.addInline("staticImage", byteArrayResource);
+        helper.addInline("ticket", byteArrayResource);
         mailSender.send(mimeMessage);
     }
 

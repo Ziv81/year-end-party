@@ -4,10 +4,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.changing.party.common.GlobalVariable;
 import com.changing.party.common.JWTUtil;
 import com.changing.party.common.ServerConstant;
+import com.changing.party.common.exception.TimeNotYetException;
 import com.changing.party.response.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Log4j2
+@Order(2)
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     boolean isNotOpenCanAccess(HttpServletRequest request) {
         if (request.getServletPath().equals("/rest/api/user/login") ||
@@ -35,14 +38,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (!GlobalVariable.getGlobalVariableService().isOpen() && !isNotOpenCanAccess(request)) {
-            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            new ObjectMapper().writeValue(response.getOutputStream(),
-                    Response.builder()
-                            .errorCode(ServerConstant.SERVER_FAIL_CODE)
-                            .errorMessage("Time not yet.")
-                            .build());
-            return;
+            String userId = "";
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                DecodedJWT decodedJWT = JWTUtil.verifyJWTToken(authorizationHeader.substring("Bearer ".length()));
+                userId = decodedJWT.getSubject();
+            }
+            throw new TimeNotYetException(userId);
         }
         if (request.getServletPath().equals("/rest/api/user/login")
                 || request.getServletPath().contains("h2-console")
@@ -50,7 +53,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     DecodedJWT decodedJWT = JWTUtil.verifyJWTToken(authorizationHeader.substring("Bearer ".length()));

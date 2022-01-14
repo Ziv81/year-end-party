@@ -25,6 +25,7 @@ public class ServiceLog {
     public static final int STAKE_FINISH = 9;
     public static final int STAKE_PLACE_BETS = 10;
     public static final int USER_UPDATE_POINTS = 11;
+    public static final int USER_ACCESS_AT_NOT_OPEN = 12;
 
 
     @Id

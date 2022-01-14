@@ -3,7 +3,10 @@ package com.changing.party.common.exception.handler;
 import com.changing.party.common.ServerConstant;
 import com.changing.party.common.exception.*;
 import com.changing.party.response.Response;
+import com.changing.party.service.ServiceLogService;
+import com.changing.party.service.UserService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +23,12 @@ import java.util.Optional;
 @ControllerAdvice
 @Log4j2
 public class ServerExceptionHandler {
+
+    @Autowired
+    private ServiceLogService serviceLogService;
+    @Autowired
+    private UserService userService;
+
 
     @ExceptionHandler(UserIdNotFoundException.class)
     public Object usernameNotFoundExceptionHandler(UserIdNotFoundException exception) {
@@ -281,6 +290,15 @@ public class ServerExceptionHandler {
                 Response.builder()
                         .errorCode(ServerConstant.SERVER_FAIL_CODE)
                         .errorMessage("Only can get own user info.")
+                        .build());
+    }
+
+    @ExceptionHandler(TimeNotYetException.class)
+    public Object timeNotYetExceptionHandler(TimeNotYetException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Response.builder()
+                        .errorCode(ServerConstant.SERVER_FAIL_CODE)
+                        .errorMessage("Time not yet.")
                         .build());
     }
 
