@@ -1,6 +1,7 @@
 package com.changing.party.service;
 
 import com.changing.party.common.GlobalVariable;
+import com.changing.party.common.Utils;
 import com.changing.party.common.exception.GetUserRankException;
 import com.changing.party.common.exception.OnlyCanGetOwnUserInfoException;
 import com.changing.party.common.exception.UserAlreadyCheckInException;
@@ -12,8 +13,11 @@ import com.changing.party.model.OnlyPointModel;
 import com.changing.party.model.UserModel;
 import com.changing.party.repository.UserRepository;
 import com.changing.party.request.UploadUserRequest;
+import com.changing.party.response.UploadUserResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +27,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -53,41 +57,59 @@ public class UserService implements UserDetailsService {
         return UserLeaderBoardDTO.getUserLeaderBoardModel(userRepository.findByOrderByUserPointDescEnglishNameAsc());
     }
 
-    public void createUsers(List<UploadUserRequest> users,
-                            AtomicReference<Integer> createUser,
-                            AtomicReference<Integer> editUser,
-                            boolean autoUpdate) {
-        String passwordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
+
+    public List<UploadUserResponse> createUsers(List<UploadUserRequest> users,
+                                                AtomicReference<Integer> createUser,
+                                                AtomicReference<Integer> editUser,
+                                                boolean autoUpdate) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        List<UploadUserResponse> uploadUserResponses = new ArrayList<>();
+
         users.forEach(user -> {
             Optional<UserModel> existUserOptional = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
             int isAdmin = GlobalVariable.getGlobalVariableService().getADMIN_USER_LIST().contains(user.getEmail().toLowerCase(Locale.ROOT)) ? 1 : 0;
+            String loginName = user.getEmail().replace("@changingtec.com", "");
+            Integer userId = 0;
+            // Read password from request or random password, length 5
+            String plainTextPassword = StringUtils.isBlank(user.getPassword()) ? RandomStringUtils.randomAlphanumeric(5) : user.getPassword();
+            String sha256Password = Utils.byteToHex(digest.digest(
+                    plainTextPassword.getBytes(StandardCharsets.UTF_8))).toLowerCase(Locale.ROOT);
+
             if (!existUserOptional.isPresent()) {
-                userRepository.save(UserModel.builder()
-                        .password(passwordEncoder.encode(passwordHash))
+                UserModel newUser = userRepository.save(UserModel.builder()
+                        .password(passwordEncoder.encode(sha256Password))
                         .chineseName(user.getChineseName())
                         .englishName(user.getEnglishName())
                         .department(String.format("%s %s", user.getDepartment(), user.getGroup()))
-                        .loginName(user.getEmail().replace("@changingtec.com", ""))
+                        .loginName(loginName)
                         .jobTitle(user.getJobTitle())
                         .email(user.getEmail())
                         .createDate(new Date())
                         .userPoint(0)
                         .isAdmin(isAdmin)
                         .build());
+                userId = newUser.getUserId();
                 createUser.getAndSet(createUser.get() + 1);
             } else if (autoUpdate) {
                 UserModel existUser = existUserOptional.get();
                 existUser.setChineseName(user.getChineseName());
                 existUser.setEnglishName(user.getEnglishName());
-                existUser.setLoginName(user.getEmail().replace("@changingtec.com", ""));
+                existUser.setLoginName(loginName);
                 existUser.setDepartment(String.format("%s %s", user.getDepartment(), user.getGroup()));
                 existUser.setJobTitle(user.getJobTitle());
-                existUser.setPassword(passwordEncoder.encode(passwordHash));
+                existUser.setPassword(passwordEncoder.encode(sha256Password));
                 existUser.setIsAdmin(isAdmin);
                 userRepository.save(existUser);
+                userId = existUser.getUserId();
                 editUser.getAndSet(editUser.get() + 1);
             }
+            uploadUserResponses.add(UploadUserResponse.builder()
+                    .userId(userId)
+                    .loginName(loginName)
+                    .password(plainTextPassword)
+                    .build());
         });
+        return uploadUserResponses;
     }
 
     /**
@@ -178,4 +200,5 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userRepository.findByUserId(id))
                 .orElseThrow(() -> new UserIdNotFoundException(id));
     }
+
 }

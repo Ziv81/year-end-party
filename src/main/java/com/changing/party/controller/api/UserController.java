@@ -5,6 +5,7 @@ import com.changing.party.common.exception.OnlyCanGetOwnUserInfoException;
 import com.changing.party.common.exception.UploadUserIsEmptyException;
 import com.changing.party.request.UploadUsersRequest;
 import com.changing.party.response.Response;
+import com.changing.party.response.UploadUserResponse;
 import com.changing.party.response.UserResponse;
 import com.changing.party.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.validation.constraints.Size;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -49,10 +52,10 @@ public class UserController {
     @PostMapping(value = "/uploadUsers",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public Response uploadUsers(@RequestBody UploadUsersRequest uploadUsers,
-                                @RequestParam(name = "autoUpdate") boolean autoUpdate) {
+                                @RequestParam(name = "autoUpdate") boolean autoUpdate) throws NoSuchAlgorithmException {
         AtomicReference<Integer> createUser = new AtomicReference<>(0);
         AtomicReference<Integer> editUser = new AtomicReference<>(0);
-        userService.createUsers(
+        List<UploadUserResponse> uploadUserResponseList = userService.createUsers(
                 Optional.ofNullable(uploadUsers.getUsers())
                         .orElseThrow(() -> new UploadUserIsEmptyException()),
                 createUser,
@@ -61,6 +64,7 @@ public class UserController {
         return Response.builder()
                 .errorCode(ServerConstant.SERVER_SUCCESS_CODE)
                 .errorMessage(String.format("Success import user %s, edit user %s.", createUser.get(), editUser.get()))
+                .data(uploadUserResponseList)
                 .build();
     }
 }

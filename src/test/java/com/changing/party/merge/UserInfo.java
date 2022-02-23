@@ -1,15 +1,13 @@
-package com.changing.party.request;
+package com.changing.party.merge;
 
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
 
-@Builder
-@Log4j2
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class UploadUserRequest {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserInfo {
     private String chineseName;
     private String englishName;
     private String department;

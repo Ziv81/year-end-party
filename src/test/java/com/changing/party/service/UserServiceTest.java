@@ -95,7 +95,7 @@ class UserServiceTest {
                 firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
-        when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
+        when(userRepository.findByUserId(Mockito.any())).thenReturn((UserModel) userModels);
         List<UserResponse> userList = userService.getUserLeaderBoard().getResult();
         Assertions.assertEquals(3, userList.size());
         Assertions.assertEquals("First", userList.get(0).getUserName());
@@ -124,7 +124,7 @@ class UserServiceTest {
                 firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
-        when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
+        when(userRepository.findByUserId(Mockito.any())).thenReturn((UserModel) userModels);
         List<UserResponse> userList = userService.getUserLeaderBoard().getResult();
         Assertions.assertEquals(3, userList.size());
 
@@ -156,7 +156,7 @@ class UserServiceTest {
                 firstUser, secondUser, thirdUser, forthUser, fifthUser
         );
 
-        when(userRepository.findAllByOrderByUserPoint(Mockito.any())).thenReturn(userModels);
+        when(userRepository.findByUserId(Mockito.any())).thenReturn((UserModel) userModels);
         List<UserResponse> userList = userService.getUserLeaderBoard().getResult();
         Assertions.assertEquals(4, userList.size());
 
